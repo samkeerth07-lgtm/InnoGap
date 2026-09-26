@@ -1,7 +1,7 @@
 import { ArrowLeft, Bell, CheckCircle2, Lightbulb, User, TrendingUp, Layers, ArrowRight, FileText, Download } from 'lucide-react'
 import InfoCard from './InfoCard'
 import SolutionCard from './SolutionCard'
-import { mockAnalysisResult, similarSolutions } from '../analysisData'
+import { mockAnalysisResult } from '../analysisData'
 
 export default function AnalysisResultPage({
   result = mockAnalysisResult,
@@ -93,7 +93,7 @@ export default function AnalysisResultPage({
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {similarSolutions.map((solution) => (
+          {result.similarSolutions?.map((solution) => (
             <SolutionCard key={solution.id} solution={solution} />
           ))}
         </div>

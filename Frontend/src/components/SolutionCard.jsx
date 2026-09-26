@@ -2,6 +2,14 @@ import { Bot, Brain, Cpu } from 'lucide-react'
 
 const ICONS = { bot: Bot, brain: Brain, cpu: Cpu }
 
+function truncateText(text, maxLength = 160) {
+  if (!text) return ''
+
+  return text.length > maxLength
+    ? `${text.slice(0, maxLength)}...`
+    : text
+}
+
 export default function SolutionCard({ solution }) {
   const Icon = ICONS[solution.icon]
 
@@ -17,7 +25,9 @@ export default function SolutionCard({ solution }) {
         </div>
       </div>
 
-      <p className="mb-4 text-sm leading-relaxed text-gray-500">{solution.description}</p>
+      <p className="mb-4 text-sm leading-relaxed text-gray-500">
+  {truncateText(solution.description, 160)}
+</p>
 
       <div className="rounded-lg bg-gray-50 p-3">
         <p className="mb-2 text-xs text-gray-400">Key Capabilities</p>

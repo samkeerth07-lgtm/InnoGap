@@ -4,6 +4,7 @@ import { badgeClass } from '../sourcesData'
 
 export default function SourceDetailPanel({ source }) {
   const { detail } = source
+  const similarity = detail?.similarity && typeof detail.similarity === 'object' ? detail.similarity : null
 
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
@@ -61,12 +62,59 @@ export default function SourceDetailPanel({ source }) {
       <hr className="mb-6 border-gray-100" />
 
       <h3 className="mb-2 text-sm font-semibold text-gray-900">Relevance to Your Idea</h3>
-      <div className="mb-6 flex gap-3 rounded-xl bg-blue-50/60 p-4">
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
-          <CheckCircle2 className="h-4 w-4" />
-        </span>
-        <p className="text-sm leading-relaxed text-gray-700">{detail.relevance}</p>
-      </div>
+      {similarity ? (
+        <div className="mb-6 rounded-xl bg-blue-50/60 p-4">
+          <div className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
+              <CheckCircle2 className="h-4 w-4" />
+            </span>
+            <div className="min-w-0 flex-1 text-sm leading-relaxed text-gray-700">
+              <p className="mb-2 font-medium text-gray-900">
+                Similarity level: <span className="font-semibold text-blue-700">{similarity.similarity}</span>
+              </p>
+              {similarity.reason ? <p className="mb-3">{similarity.reason}</p> : null}
+
+              {Array.isArray(similarity.overlap) && similarity.overlap.length > 0 ? (
+                <div className="mb-3">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Common Capabilities
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {similarity.overlap.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-gray-700 ring-1 ring-gray-200"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {Array.isArray(similarity.differences) && similarity.differences.length > 0 ? (
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Differences
+                  </p>
+                  <ul className="space-y-1.5">
+                    {similarity.differences.map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-gray-400" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+          Similarity analysis is not available for this source.
+        </div>
+      )}
 
       <hr className="mb-6 border-gray-100" />
 

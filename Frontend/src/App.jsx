@@ -37,19 +37,54 @@ export default function App() {
     setPage('analysis-result')
   }
 
-  const handleSelectAnalysis = (item) => {
-    openResult(item.resultData ?? mockAnalysisResult)
+  const handleSelectAnalysis = async (item) => {
+    if (item.resultData) {
+      openResult(item.resultData)
+      return
+    }
+
+    const problemStatement = item.problemStatement ?? item.title
+    const mySolution = item.mySolution ?? ''
+    const response = await fetch('http://localhost:5000/api/analysis', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ProblemStatement: problemStatement,
+        MySolution: mySolution,
+      }),
+    })
+
+    const result = await response.json()
+
+    console.log(result)
   }
 
   const handleSelectSavedIdea = (item) => {
     openResult(item.resultData ?? mockAnalysisResult)
   }
 
-  const handleSubmitAnalysis = ({ problem, solution }) => {
-    // TODO: replace with a real API call using `problem` and `solution`.
-    // The mock result below is used for every new analysis for now —
-    // swap this for whatever the API returns.
-    const result = mockAnalysisResult
+  const handleSubmitAnalysis = async ({ problem, solution }) => {
+  try {
+    const response = await fetch('http://localhost:5000/api/analysis', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ProblemStatement: problem,
+        MySolution: solution,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(
+        `Analysis request failed with status ${response.status}`
+      )
+    }
+
+    const result = await response.json()
 
     const newEntry = {
       id: `local-${Date.now()}`,
@@ -63,7 +98,10 @@ export default function App() {
 
     setAnalyses((prev) => [newEntry, ...prev])
     openResult(result)
+  } catch (error) {
+    console.error('Unable to submit analysis:', error)
   }
+}
 
   const handleSaveReport = () => {
     const alreadySaved = savedIdeas.some((item) => item.title === activeResult.title)
@@ -128,10 +166,12 @@ export default function App() {
 
         {page === 'sources' && (
           <SourcesPage
+            sources={activeResult.similarSolutions || []}
             onBackToResults={() => setPage('analysis-result')}
             onBackToSummary={() => setPage('analysis-result')}
           />
         )}
+      
       </main>
     </div>
   )

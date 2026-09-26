@@ -1,4 +1,4 @@
-import { Bot, Cpu, ScrollText, Github, Box, Search } from 'lucide-react'
+import { Bot, Cpu, ScrollText, Github, Box, Search, Brain } from 'lucide-react'
 
 const ICONS = {
   bot: Bot,
@@ -6,7 +6,8 @@ const ICONS = {
   scroll: ScrollText,
   github: Github,
   box: Box,
-  google: Search, // generic stand-in icon — swap for a real brand asset if needed
+  google: Search,
+  brain: Brain,
 }
 
 export default function SourceIcon({ icon, className, style }) {
