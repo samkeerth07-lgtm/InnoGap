@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test:
+  backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,8 +18,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install Backend dependencies
+        working-directory: Backend
         run: npm install
 
-      - name: Run tests
+      - name: Run Backend tests
+        working-directory: Backend
         run: npm test
