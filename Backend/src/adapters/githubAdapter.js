@@ -38,7 +38,10 @@ const adaptGitHubRepository = (repository) => {
       analysis?.whatItDoes || [],
 
     sourceUrl:
-      repository.html_url
+      repository.html_url,
+
+    implementation:
+      repository.implementationAnalysis || null
   };
 };
 
