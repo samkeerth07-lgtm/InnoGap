@@ -106,7 +106,9 @@ const analyzeProblem = async (req, res) => {
 
     const githubPromise =
       searchGitHub(
-        problemAnalysis.searchQueries
+        problemAnalysis.searchQueries,
+        ProblemStatement,
+        MySolution || ""
       ).catch((error) => {
 
         console.error(

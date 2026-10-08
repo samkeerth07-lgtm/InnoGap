@@ -147,6 +147,115 @@ or proposed solution.
   }
 };
 
+const analyzeRepositoryRelevance = async (
+  problemStatement,
+  mySolution,
+  repoData = {}
+) => {
+  const {
+    name = "",
+    description = "",
+    technologies = [],
+    readmeExcerpt = ""
+  } = repoData;
+
+  const prompt = `
+You are a relevance filter for InnoGap.
+
+Your job is to decide whether an open-source GitHub repository is genuinely related to the student's problem and proposed solution.
+
+STUDENT PROBLEM:
+${problemStatement}
+
+STUDENT PROPOSED SOLUTION:
+${mySolution}
+
+GITHUB REPOSITORY NAME:
+${name}
+
+GITHUB REPOSITORY DESCRIPTION:
+${description}
+
+DETECTED TECHNOLOGIES:
+${Array.isArray(technologies) ? technologies.join(", ") : technologies}
+
+README EXCERPT:
+${readmeExcerpt}
+
+Return ONLY valid JSON.
+
+Use exactly this structure:
+
+{
+  "relevant": true,
+  "score": 0,
+  "reason": ""
+}
+
+Rules:
+1. "relevant" must be true or false. Set relevant to true when score is 50 or higher.
+2. "score" must be an integer from 0 to 100 representing the degree of functional and problem relevance.
+3. Judge functional and problem alignment, NOT superficial keyword overlap.
+4. Give high relevance (score 70-100) if the repository addresses the same core problem, builds a similar type of system, or solves a closely related challenge.
+5. Give moderate relevance (score 50-69) if the repository addresses a related domain or provides key functional mechanisms applicable to the student's idea.
+6. Give low relevance (score 0-49, relevant: false) if:
+   - The repository merely shares generic tech buzzwords (e.g. IoT, AI, Python, React, sensors) but solves a completely unrelated problem.
+   - For example: if the student is solving street light failure detection, a general IoT home automation switch or a computer-vision plant disease detector is NOT relevant.
+7. Do not judge patentability or legal originality.
+8. Keep the reason concise (1-2 sentences).
+`;
+
+  try {
+    const response = await client.chat.completions.create({
+      model: "openrouter/free",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ]
+    });
+
+    let text = response.choices[0].message.content;
+
+    text = text
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+
+    if (start === -1 || end === -1) {
+      throw new Error(
+        "Repository relevance AI response does not contain valid JSON"
+      );
+    }
+
+    const jsonText = text.substring(start, end + 1);
+    const parsed = JSON.parse(jsonText);
+
+    const score = typeof parsed.score === "number" ? parsed.score : Number(parsed.score) || 0;
+    const isRelevant = Boolean(parsed.relevant && score >= 50);
+
+    return {
+      relevant: isRelevant,
+      score,
+      reason: parsed.reason || "Relevance evaluated based on problem and solution alignment."
+    };
+  } catch (error) {
+    console.error("Repository relevance analysis failed:");
+    console.error(error.message);
+
+    return {
+      relevant: false,
+      score: 0,
+      reason: "Repository relevance analysis could not be completed."
+    };
+  }
+};
+
 module.exports = {
-  analyzeRelevance
+  analyzeRelevance,
+  analyzeRepositoryRelevance
 };
