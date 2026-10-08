@@ -58,10 +58,11 @@ Rules:
 5. Identify technologies mentioned or strongly implied.
 6. Identify important actions such as detection, monitoring,
    prediction, tracking, automation, etc.
-7. Generate 3 to 5 different search queries.
-8. Search queries should describe the problem and solution area,
-   not copy the entire problem statement.
-9. Do not make claims about originality.
+7. Generate 2 to 3 diverse search queries optimized specifically for GitHub repository search.
+8. Each search query should be concise and keyword-focused (roughly 3 to 7 meaningful terms), combining domain concepts, the core problem or action, and relevant technical concepts or technologies when genuinely useful.
+9. Avoid conversational filler phrases such as "how to", "system for", "project for", "using", "build a", or "application that".
+10. Ensure the 2 to 3 queries are meaningfully different from each other rather than near-duplicates.
+11. Do not make claims about originality.
 `;
 
   try {
