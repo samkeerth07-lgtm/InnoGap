@@ -35,15 +35,13 @@ export default function Sidebar({
             <p className="text-lg font-bold tracking-tight text-slate-900">
               InnoGap
             </p>
-            <p className="text-[11px] font-medium text-slate-400">
-              Innovation intelligence
-            </p>
+            
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 px-3">
+      <div className="flex flex-1 flex-col px-3">
         <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
           Workspace
         </p>
@@ -86,8 +84,7 @@ export default function Sidebar({
           })}
         </nav>
 
-        {/* Secondary navigation */}
-        <div className="mt-8">
+        <div className="mt-auto pt-8">
           <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
             Manage
           </p>
@@ -126,14 +123,7 @@ export default function Sidebar({
           <ChevronDown className="h-4 w-4 text-slate-400" />
         </button>
 
-        <div className="mt-3 rounded-xl bg-blue-50 px-3 py-3">
-          <p className="text-[11px] font-semibold leading-4 text-blue-700">
-            Find what already exists.
-          </p>
-          <p className="text-[11px] leading-4 text-blue-500">
-            Build what doesn't.
-          </p>
-        </div>
+        
       </div>
     </aside>
   )
