@@ -7,6 +7,10 @@ const {
 } = require("../analyzers/readmeAnalyzer");
 
 const {
+	analyzeRepositoryRelevance
+} = require("../analyzers/relevanceAnalyzer");
+
+const {
 	adaptGitHubRepository
 } = require("../adapters/githubAdapter");
 
@@ -17,6 +21,7 @@ const {
 const GITHUB_API_URL = "https://api.github.com";
 const MAX_RESULTS_PER_QUERY = 5;
 const MAX_REPOSITORIES = 10;
+const MAX_SEMANTIC_CANDIDATES = 4;
 
 const githubHeaders = (accept = "application/vnd.github+json") => {
 	const headers = {
@@ -95,23 +100,7 @@ const searchRepositories = async (query) => {
 	}
 };
 
-const analyzeRepository = async (repository) => {
-	const [readme, files] = await Promise.all([
-		getRepositoryReadme(repository),
-		getRepositoryFiles(repository)
-	]);
-
-	const readmeAnalysis = await analyzeReadme(readme);
-	const implementationAnalysis = analyzeImplementation(readme, files);
-
-	return adaptGitHubRepository({
-		...repository,
-		readmeAnalysis,
-		implementationAnalysis
-	});
-};
-
-const searchGitHub = async (searchQueries = []) => {
+const searchGitHub = async (searchQueries = [], problemStatement = "", mySolution = "") => {
 	if (!Array.isArray(searchQueries)) {
 		return [];
 	}
@@ -130,7 +119,86 @@ const searchGitHub = async (searchQueries = []) => {
 	const repositories = removeDuplicateRepositories(searchResults.flat())
 		.slice(0, MAX_REPOSITORIES);
 
-	return Promise.all(repositories.map(analyzeRepository));
+	// 1. Fetch README and files for candidates and perform deterministic quality checks
+	const inspectedCandidates = await Promise.all(
+		repositories.map(async (repo) => {
+			const [readme, files] = await Promise.all([
+				getRepositoryReadme(repo),
+				getRepositoryFiles(repo)
+			]);
+
+			const trimmedReadme = typeof readme === "string" ? readme.trim() : "";
+			if (trimmedReadme.length < 150) {
+				return null;
+			}
+
+			const implementationAnalysis = analyzeImplementation(trimmedReadme, files);
+			const hasCode = implementationAnalysis.codeAvailable || (Boolean(repo.language) && (repo.size || 0) > 0);
+			if (!hasCode) {
+				return null;
+			}
+
+			return {
+				repository: repo,
+				readme: trimmedReadme,
+				implementationAnalysis
+			};
+		})
+	);
+
+	// 2. Cap bounded candidates for expensive semantic evaluation (max 4)
+	const viableCandidates = inspectedCandidates
+		.filter(Boolean)
+		.slice(0, MAX_SEMANTIC_CANDIDATES);
+
+	// 3. Perform semantic relevance evaluation and deep README analysis
+	const finalResults = await Promise.all(
+		viableCandidates.map(async ({ repository, readme, implementationAnalysis }) => {
+			const truncatedReadme = readme.length > 4000
+				? readme.slice(0, 4000)
+				: readme;
+
+			let relevance = null;
+			if (problemStatement && problemStatement.trim()) {
+				relevance = await analyzeRepositoryRelevance(
+					problemStatement,
+					mySolution,
+					{
+						name: repository.name,
+						description: repository.description || "",
+						technologies: repository.language ? [repository.language] : [],
+						readmeExcerpt: truncatedReadme.slice(0, 2000)
+					}
+				);
+
+				if (!relevance.relevant || relevance.score < 50) {
+					console.log(
+						`Skipping irrelevant repository "${repository.full_name || repository.name}": ${relevance.reason}`
+					);
+					return null;
+				}
+			}
+
+			const readmeAnalysis = await analyzeReadme(truncatedReadme);
+
+			const adapted = adaptGitHubRepository({
+				...repository,
+				readmeAnalysis,
+				implementationAnalysis
+			});
+
+			return {
+				...adapted,
+				relevance: relevance || {
+					relevant: true,
+					score: 100,
+					reason: "Retained based on search query match and implementation evidence."
+				}
+			};
+		})
+	);
+
+	return finalResults.filter(Boolean);
 };
 
 module.exports = {
