@@ -27,6 +27,7 @@ class Settings:
         "OPENROUTER_MODEL", "openrouter/free"
     )
     GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN", "")
+    OPENALEX_API_KEY: str = os.getenv("OPENALEX_API_KEY", "")
     HOST: str = os.getenv("HOST", "0.0.0.0")
     PORT: int = int(os.getenv("PORT", "5000"))
     ALLOWED_ORIGINS: list[str] = [
