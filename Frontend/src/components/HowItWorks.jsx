@@ -39,9 +39,9 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5">
+    <section className="rounded-[28px] border border-white/75 bg-white/55 p-5 shadow-[0_18px_48px_rgba(83,105,156,0.08)] backdrop-blur-xl sm:p-6">
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">
+        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
           The InnoGap process
         </p>
 
@@ -65,16 +65,16 @@ export default function HowItWorks() {
             >
               {/* connector */}
               {index < STEPS.length - 1 && (
-                <div className="absolute left-5 top-11 h-8 w-px bg-slate-200" />
+                <div className="absolute left-5 top-11 h-8 w-px bg-slate-300/70" />
               )}
 
-              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white">
+              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e6ff1f] text-[#202426] transition group-hover:bg-[#292d2e] group-hover:text-[#e6ff1f]">
                 <Icon className="h-4.5 w-4.5" />
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold tracking-wider text-blue-500">
+                  <span className="text-[10px] font-bold tracking-wider text-slate-400">
                     {step.number}
                   </span>
 

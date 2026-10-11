@@ -9,56 +9,37 @@ import {
 
 export default function PageHeader({ onStartAnalysis }) {
   return (
-    <section className="relative mb-6 min-h-[340px] overflow-hidden bg-white">
+    <section className="relative mb-5 overflow-hidden rounded-[28px] border border-white/60 bg-white/20 px-5 py-5 backdrop-blur-sm sm:px-7 sm:py-6">
       {/* Background glow */}
-      <div className="pointer-events-none absolute right-[5%] top-[-150px] h-[520px] w-[520px] rounded-full bg-blue-100/60 blur-3xl" />
+      <div className="pointer-events-none absolute right-[5%] top-[-170px] h-[320px] w-[440px] rounded-full bg-white/70 blur-3xl" />
 
-      <div className="pointer-events-none absolute right-[20%] top-[20px] h-[360px] w-[360px] rounded-full bg-sky-100/40 blur-2xl" />
+      <div className="pointer-events-none absolute right-[20%] top-[20px] h-[220px] w-[260px] rounded-full bg-[#d5e5ff]/60 blur-2xl" />
 
-      <div className="relative grid min-h-[340px] items-center lg:grid-cols-[0.95fr_1.05fr]">
+      <div className="relative flex min-h-[150px] items-center">
         {/* LEFT CONTENT */}
-        <div className="relative z-10 pb-8 pt-8 lg:py-10">
+        <div className="relative z-10">
           {/* Welcome */}
-          <div className="mb-3 flex items-center gap-2">
-            <span className="text-base">👋</span>
-
-            <p className="text-base font-semibold text-slate-800">
-              Welcome back, Samkeerth
-            </p>
-          </div>
-
-          {/* Small description */}
-          <p className="mb-5 text-sm text-slate-500">
-            Turn your ideas into something greater with InnoGap.
-          </p>
 
           {/* Main heading */}
-          <h1 className="max-w-[620px] text-[42px] font-bold leading-[1.05] tracking-[-0.03em] text-[#102A56] xl:text-[46px]">
-            Find what already exists.
-            <br />
-            <span className="text-blue-600">
-              Build what doesn't.
-            </span>
+          <h1 className="max-w-[620px] text-[34px] font-medium leading-[1.08] text-[#252a2c] sm:text-[40px]">
+            Ideas into insight.
+            <span className="text-slate-500"> Make room for what's next.</span>
           </h1>
 
           {/* Description */}
-          <p className="mt-5 max-w-[560px] text-[15px] leading-6 text-slate-500">
+          <p className="mt-3 max-w-[560px] text-sm leading-6 text-slate-600">
             InnoGap helps you discover existing solutions, research,
             projects and implementations before you build. Go beyond
             similarity — find the real gap.
           </p>
 
           {/* Buttons */}
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={onStartAnalysis}
-              className="group inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200/60 transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700"
+              className="group inline-flex items-center gap-2 rounded-full bg-[#e6ff1f] px-5 py-3 text-sm font-bold text-[#202426] shadow-[0_8px_22px_rgba(169,190,0,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d9f216]"
             >
-              <span className="text-lg font-normal leading-none">
-                +
-              </span>
-
               Start New Analysis
 
               <ArrowRight
@@ -66,21 +47,12 @@ export default function PageHeader({ onStartAnalysis }) {
               />
             </button>
 
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-blue-50"
-            >
-              <Play
-                className="h-4 w-4 fill-blue-500 text-blue-500"
-              />
 
-              How it works
-            </button>
           </div>
         </div>
 
        {/* ================= EXACT RIGHT-SIDE VISUAL ================= */}
-<div className="relative hidden h-[315px] w-[560px] lg:block">
+<div className="hidden">
 
   {/* Main soft blue circular glow */}
   <div
