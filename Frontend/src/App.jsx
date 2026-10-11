@@ -248,7 +248,7 @@ export default function App() {
 
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen flex-col overflow-hidden bg-[#e8efff] text-[#202426]">
 
       {/* =========================================
           FIXED SIDEBAR
@@ -263,22 +263,17 @@ export default function App() {
           SCROLLABLE MAIN AREA
       ========================================== */}
       <main
-        className="
-          min-h-0
-          min-w-0
-          flex-1
-          overflow-y-auto
-          overflow-x-hidden
-          bg-slate-50
-        "
+        className="relative min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-[radial-gradient(ellipse_at_70%_0%,rgba(255,255,255,0.9),transparent_42%),linear-gradient(135deg,#e8f2ff_0%,#e8eaff_48%,#f2f5ff_100%)]"
       >
         <div
           className="
             mx-auto
             w-full
             max-w-[1500px]
-            px-6
-            py-5
+            px-4
+            pb-8
+            pt-5
+            sm:px-6
             lg:px-8
           "
         >

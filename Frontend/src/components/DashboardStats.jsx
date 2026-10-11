@@ -10,36 +10,29 @@ const STATS = [
   {
     label: 'Total Analyses',
     value: '12',
-    note: '3 this week',
+    note: '+3 this week',
     icon: FileText,
     iconClass: 'bg-blue-50 text-blue-600',
   },
   {
     label: 'Saved Ideas',
     value: '5',
-    note: '1 this week',
+    note: '+1 this week',
     icon: Bookmark,
     iconClass: 'bg-emerald-50 text-emerald-600',
   },
   {
     label: 'Potential Gaps',
     value: '8',
-    note: '2 this week',
+    note: 'Across your analyses',
     icon: Target,
-    iconClass: 'bg-violet-50 text-violet-600',
-  },
-  {
-    label: 'Avg. Analysis Time',
-    value: '2–3 min',
-    note: 'Improving',
-    icon: Clock3,
-    iconClass: 'bg-amber-50 text-amber-600',
+    iconClass: 'bg-lime-100 text-slate-900',
   },
 ]
 
 export default function DashboardStats() {
   return (
-    <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="mb-5 grid grid-cols-1 gap-3 rounded-[28px] border border-white/70 bg-white/35 p-3 shadow-[0_18px_48px_rgba(83,105,156,0.08)] backdrop-blur-xl sm:grid-cols-3">
       {STATS.map(
         ({
           label,
@@ -50,7 +43,7 @@ export default function DashboardStats() {
         }) => (
           <div
             key={label}
-            className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-100"
+            className="rounded-[22px] border border-white/80 bg-white/60 p-4 transition hover:-translate-y-0.5 hover:bg-white/80 sm:p-5"
           >
             <div className="flex items-start justify-between">
               <span
@@ -59,18 +52,18 @@ export default function DashboardStats() {
                 <Icon className="h-5 w-5" />
               </span>
 
-              <ArrowUpRight className="h-4 w-4 text-slate-300" />
+              <ArrowUpRight className="h-4 w-4 text-slate-400" />
             </div>
 
-            <p className="mt-5 text-xs font-medium text-slate-400">
+              <p className="mt-4 text-xs font-medium text-slate-500">
               {label}
             </p>
 
-            <p className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
+              <p className="mt-1 text-2xl font-bold tracking-tight text-[#222728]">
               {value}
             </p>
 
-            <p className="mt-2 text-xs font-medium text-emerald-600">
+              <p className="mt-2 text-xs font-medium text-slate-500">
               {note}
             </p>
           </div>
