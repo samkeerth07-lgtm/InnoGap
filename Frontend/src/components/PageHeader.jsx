@@ -9,11 +9,11 @@ import {
 
 export default function PageHeader({ onStartAnalysis }) {
   return (
-    <section className="relative mb-5 overflow-hidden rounded-[28px] border border-white/60 bg-white/20 px-5 py-5 backdrop-blur-sm sm:px-7 sm:py-6">
+    <section className="relative mb-5 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5 shadow-[var(--card-shadow)] backdrop-blur-sm sm:px-7 sm:py-6">
       {/* Background glow */}
-      <div className="pointer-events-none absolute right-[5%] top-[-170px] h-[320px] w-[440px] rounded-full bg-white/70 blur-3xl" />
+      <div className="pointer-events-none absolute right-[5%] top-[-170px] h-[320px] w-[440px] rounded-full bg-[var(--surface)] blur-3xl" />
 
-      <div className="pointer-events-none absolute right-[20%] top-[20px] h-[220px] w-[260px] rounded-full bg-[#d5e5ff]/60 blur-2xl" />
+      <div className="pointer-events-none absolute right-[20%] top-[20px] h-[220px] w-[260px] rounded-full bg-[var(--bg-edge)] blur-2xl" />
 
       <div className="relative flex min-h-[150px] items-center">
         {/* LEFT CONTENT */}
@@ -21,13 +21,13 @@ export default function PageHeader({ onStartAnalysis }) {
           {/* Welcome */}
 
           {/* Main heading */}
-          <h1 className="max-w-[620px] text-[34px] font-medium leading-[1.08] text-[#252a2c] sm:text-[40px]">
+          <h1 className="max-w-[620px] text-[34px] font-medium leading-[1.08] text-[var(--ink)] sm:text-[40px]">
             Ideas into insight.
-            <span className="text-slate-500"> Make room for what's next.</span>
+            <span className="text-[var(--text)]"> Make room for what's next.</span>
           </h1>
 
           {/* Description */}
-          <p className="mt-3 max-w-[560px] text-sm leading-6 text-slate-600">
+          <p className="mt-3 max-w-[560px] text-sm leading-6 text-[var(--text)]">
             InnoGap helps you discover existing solutions, research,
             projects and implementations before you build. Go beyond
             similarity — find the real gap.
@@ -38,7 +38,7 @@ export default function PageHeader({ onStartAnalysis }) {
             <button
               type="button"
               onClick={onStartAnalysis}
-              className="group inline-flex items-center gap-2 rounded-full bg-[#e6ff1f] px-5 py-3 text-sm font-bold text-[#202426] shadow-[0_8px_22px_rgba(169,190,0,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d9f216]"
+              className="group inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-3 text-sm font-bold text-[var(--on-accent)] shadow-[var(--card-shadow)] transition-all duration-200 hover:-translate-y-0.5 hover:brightness-95"
             >
               Start New Analysis
 
@@ -63,7 +63,7 @@ export default function PageHeader({ onStartAnalysis }) {
       h-[355px]
       w-[355px]
       rounded-full
-      bg-[#e8f2ff]
+      bg-[var(--bg)]
     "
   />
 
@@ -75,7 +75,7 @@ export default function PageHeader({ onStartAnalysis }) {
       h-[290px]
       w-[290px]
       rounded-full
-      bg-[#eef6ff]
+      bg-[var(--bg-edge)]
       blur-[1px]
     "
   />
@@ -93,9 +93,9 @@ export default function PageHeader({ onStartAnalysis }) {
       w-[380px]
       rounded-[18px]
       border
-      border-white/80
-      bg-white/25
-      shadow-[0_20px_50px_rgba(59,130,246,0.08)]
+      border-[var(--border)]
+      bg-[var(--surface)]
+      shadow-[var(--card-shadow)]
       backdrop-blur-[2px]
     "
   />
@@ -109,8 +109,8 @@ export default function PageHeader({ onStartAnalysis }) {
       w-[355px]
       rounded-[18px]
       border
-      border-white/70
-      bg-white/20
+      border-[var(--border)]
+      bg-[var(--surface)]
     "
   />
 
@@ -132,9 +132,9 @@ export default function PageHeader({ onStartAnalysis }) {
       justify-center
       rounded-[13px]
       border
-      border-[#dceafe]
-      bg-white
-      shadow-[0_10px_28px_rgba(30,64,175,0.10)]
+      border-[var(--border)]
+      bg-[var(--surface)]
+      shadow-[var(--card-shadow)]
     "
   >
     <div
@@ -146,12 +146,12 @@ export default function PageHeader({ onStartAnalysis }) {
         items-center
         justify-center
         rounded-[11px]
-        bg-[#eff6ff]
+        bg-[var(--icon-tile)]
       "
     >
       <svg
         viewBox="0 0 24 24"
-        className="h-[21px] w-[21px] text-[#1769e0]"
+        className="h-[21px] w-[21px] text-[var(--ink)]"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
@@ -164,7 +164,7 @@ export default function PageHeader({ onStartAnalysis }) {
       </svg>
     </div>
 
-    <span className="text-[11px] font-semibold text-[#344b6b]">
+    <span className="text-[11px] font-semibold text-[var(--ink)]">
       Your Idea
     </span>
   </div>
@@ -180,13 +180,13 @@ export default function PageHeader({ onStartAnalysis }) {
   >
     <path
       d="M205 150 C228 150 235 150 257 150"
-      stroke="#73AEF7"
+      stroke="var(--muted)"
       strokeWidth="1.2"
     />
 
     <path
       d="M251 146 L258 150 L251 154"
-      stroke="#73AEF7"
+      stroke="var(--muted)"
       strokeWidth="1.2"
       fill="none"
     />
@@ -218,10 +218,10 @@ export default function PageHeader({ onStartAnalysis }) {
         gap-[12px]
         rounded-[9px]
         border
-        border-[#dbeafe]
-        bg-white
+        border-[var(--border)]
+        bg-[var(--icon-tile)]
         px-[15px]
-        shadow-[0_7px_18px_rgba(30,64,175,0.07)]
+        shadow-[var(--card-shadow)]
       "
     >
       <div
@@ -231,7 +231,7 @@ export default function PageHeader({ onStartAnalysis }) {
           w-[22px]
           items-center
           justify-center
-          text-[#1769e0]
+          text-[var(--ink)]
         "
       >
         <svg
@@ -250,7 +250,7 @@ export default function PageHeader({ onStartAnalysis }) {
         </svg>
       </div>
 
-      <span className="text-[11px] font-semibold text-[#334155]">
+      <span className="text-[11px] font-semibold text-[var(--ink)]">
         Research
       </span>
     </div>
@@ -265,21 +265,21 @@ export default function PageHeader({ onStartAnalysis }) {
         gap-[12px]
         rounded-[9px]
         border
-        border-[#dbeafe]
-        bg-white
+        border-[var(--border)]
+        bg-[var(--surface)]
         px-[15px]
-        shadow-[0_7px_18px_rgba(30,64,175,0.07)]
+        shadow-[var(--card-shadow)]
       "
     >
       <svg
         viewBox="0 0 24 24"
-        className="h-[20px] w-[20px] text-[#182b49]"
+        className="h-[20px] w-[20px] text-[var(--ink)]"
         fill="currentColor"
       >
         <path d="M12 .7a11.3 11.3 0 0 0-3.6 22c.57.1.78-.25.78-.55v-2.13c-3.18.69-3.85-1.35-3.85-1.35-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.96.1-.74.4-1.25.73-1.54-2.54-.29-5.2-1.27-5.2-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.45.11-3.02 0 0 .96-.31 3.14 1.17A10.9 10.9 0 0 1 12 5.84c.97 0 1.94.13 2.85.38 2.18-1.48 3.14-1.17 3.14-1.17.62 1.57.23 2.73.12 3.02.73.8 1.18 1.82 1.18 3.07 0 4.4-2.67 5.36-5.22 5.64.41.35.78 1.04.78 2.1v3.12c0 .3.2.65.79.54A11.3 11.3 0 0 0 12 .7Z" />
       </svg>
 
-      <span className="text-[11px] font-semibold text-[#334155]">
+      <span className="text-[11px] font-semibold text-[var(--ink)]">
         GitHub
       </span>
     </div>
@@ -294,10 +294,10 @@ export default function PageHeader({ onStartAnalysis }) {
         gap-[12px]
         rounded-[9px]
         border
-        border-[#dbeafe]
-        bg-white
+        border-[var(--border)]
+        bg-[var(--surface)]
         px-[15px]
-        shadow-[0_7px_18px_rgba(30,64,175,0.07)]
+        shadow-[var(--card-shadow)]
       "
     >
       <div
@@ -308,13 +308,13 @@ export default function PageHeader({ onStartAnalysis }) {
           items-center
           justify-center
           rounded-[4px]
-          bg-[#1769e0]
+          bg-[var(--ink)]
         "
       >
-        <div className="h-[7px] w-[7px] rounded-[1px] bg-white" />
+        <div className="h-[7px] w-[7px] rounded-[1px] bg-[var(--surface)]" />
       </div>
 
-      <span className="text-[11px] font-semibold text-[#334155]">
+      <span className="text-[11px] font-semibold text-[var(--ink)]">
         Projects
       </span>
     </div>
@@ -329,12 +329,12 @@ export default function PageHeader({ onStartAnalysis }) {
         justify-center
         rounded-[9px]
         border
-        border-[#dbeafe]
-        bg-white
-        shadow-[0_7px_18px_rgba(30,64,175,0.05)]
+        border-[var(--border)]
+        bg-[var(--surface)]
+        shadow-[var(--card-shadow)]
       "
     >
-      <span className="text-[13px] tracking-[4px] text-[#60a5fa]">
+      <span className="text-[13px] tracking-[4px] text-[var(--muted)]">
         ...
       </span>
     </div>
@@ -352,28 +352,28 @@ export default function PageHeader({ onStartAnalysis }) {
     {/* Research */}
     <path
       d="M408 61 C445 61 448 105 485 112"
-      stroke="#79B3F6"
+      stroke="var(--muted)"
       strokeWidth="1.25"
     />
 
     {/* GitHub */}
     <path
       d="M408 113 C446 113 452 128 485 132"
-      stroke="#79B3F6"
+      stroke="var(--muted)"
       strokeWidth="1.25"
     />
 
     {/* Projects */}
     <path
       d="M408 165 C445 165 450 150 485 148"
-      stroke="#79B3F6"
+      stroke="var(--muted)"
       strokeWidth="1.25"
     />
 
     {/* Bottom dots */}
     <path
       d="M408 211 C448 211 451 175 485 163"
-      stroke="#79B3F6"
+      stroke="var(--muted)"
       strokeWidth="1.25"
     />
 
@@ -382,28 +382,28 @@ export default function PageHeader({ onStartAnalysis }) {
       cx="485"
       cy="112"
       r="1.7"
-      fill="#5EA2F3"
+      fill="var(--ink)"
     />
 
     <circle
       cx="485"
       cy="132"
       r="1.7"
-      fill="#5EA2F3"
+      fill="var(--ink)"
     />
 
     <circle
       cx="485"
       cy="148"
       r="1.7"
-      fill="#5EA2F3"
+      fill="var(--ink)"
     />
 
     <circle
       cx="485"
       cy="163"
       r="1.7"
-      fill="#5EA2F3"
+      fill="var(--ink)"
     />
   </svg>
 
@@ -425,9 +425,9 @@ export default function PageHeader({ onStartAnalysis }) {
       justify-center
       rounded-[13px]
       border
-      border-[#f4df99]
-      bg-[#fff9e8]
-      shadow-[0_12px_28px_rgba(245,158,11,0.09)]
+      border-[var(--border)]
+      bg-[var(--surface)]
+      shadow-[var(--card-shadow)]
     "
   >
     <div
@@ -439,12 +439,12 @@ export default function PageHeader({ onStartAnalysis }) {
         items-center
         justify-center
         rounded-[10px]
-        bg-white
+        bg-[var(--surface)]
       "
     >
       <svg
         viewBox="0 0 24 24"
-        className="h-[20px] w-[20px] text-[#dfa000]"
+        className="h-[20px] w-[20px] text-[var(--ink)]"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
@@ -460,7 +460,7 @@ export default function PageHeader({ onStartAnalysis }) {
       </svg>
     </div>
 
-    <span className="text-center text-[11px] font-bold leading-[1.35] text-[#334155]">
+    <span className="text-center text-[11px] font-bold leading-[1.35] text-[var(--ink)]">
       Potential
       <br />
       Gap

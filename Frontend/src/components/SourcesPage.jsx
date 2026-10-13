@@ -24,8 +24,8 @@ export default function SourcesPage({
 
         iconStyle:
           source.type === 'Research Paper'
-            ? 'bg-violet-100 text-violet-700'
-            : 'bg-gray-900 text-white',
+            ? 'bg-[var(--icon-tile)] text-[var(--ink)]'
+            : 'bg-[var(--icon-tile)] text-[var(--ink)]',
 
         badge: source.type || 'GitHub',
 
@@ -115,7 +115,7 @@ export default function SourcesPage({
         <button
           type="button"
           onClick={onBackToResults}
-          className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+          className="flex items-center gap-2 text-sm font-medium text-[var(--text)] hover:text-[var(--ink)]"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Results
@@ -126,7 +126,7 @@ export default function SourcesPage({
           <button
             type="button"
             onClick={onBackToSummary}
-            className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--bg)]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Summary
@@ -135,7 +135,7 @@ export default function SourcesPage({
           <button
             type="button"
             aria-label="Notifications"
-            className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
+            className="rounded-full p-2 text-[var(--muted)] transition-colors hover:bg-[var(--bg)] hover:text-[var(--ink)]"
           >
             <Bell className="h-5 w-5" />
           </button>
@@ -145,11 +145,11 @@ export default function SourcesPage({
 
 
       {/* Title */}
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="text-2xl font-semibold text-[var(--ink)]">
         Similar Existing Solutions
       </h1>
 
-      <p className="mt-1 text-sm text-gray-500">
+      <p className="mt-1 text-sm text-[var(--text)]">
         We found several existing solutions related to your idea.
         Here are the sources we analyzed:
       </p>
@@ -170,8 +170,8 @@ export default function SourcesPage({
               onClick={() => setActiveFilter(key)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'dark-surface bg-[var(--ink)] text-[var(--surface)]'
+                  : 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg)]'
               }`}
             >
               {label} ({countFor(key)})
@@ -206,7 +206,7 @@ export default function SourcesPage({
 
           ) : (
 
-            <div className="rounded-xl border border-gray-100 bg-white p-6 text-sm text-gray-500">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 text-sm text-[var(--text)] shadow-[var(--card-shadow)]">
               No sources were found for this analysis.
             </div>
 

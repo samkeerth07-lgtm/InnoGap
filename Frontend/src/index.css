@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg: #EEF1FF;
+  --bg-edge: #E8ECFF;
+  --surface: #FFFFFF;
+  --border: #E2E8F0;
+  --ink: #1F2326;
+  --ink-raised: #2A2F33;
+  --text: #475569;
+  --muted: #64748B;
+  --icon-decor: #94A3B8;
+  --accent: #E4FF1A;
+  --accent-tint: #F4FFC2;
+  --accent-disabled: rgb(228 255 26 / 0.45);
+  --on-accent: #1F2326;
+  --success-bg: #DCFCE7;
+  --success-text: #166534;
+  --warning-bg: #FEF3C7;
+  --warning-text: #92400E;
+  --danger-bg: #FEE2E2;
+  --danger-text: #991B1B;
+  --dark-text: #CBD5E1;
+  --icon-tile: #EEF2FF;
+  --card-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --overlay: rgb(31 35 38 / 0.2);
+}
+
 html,
 body,
 #root {
@@ -11,4 +37,18 @@ body,
 body {
   font-family: 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+:where(button, a, input, textarea, select, [role='button']):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.dark-surface:where(button, a, input, textarea, select, [role='button']):focus-visible,
+.dark-surface :where(button, a, input, textarea, select, [role='button']):focus-visible {
+  outline-color: var(--accent);
+}
+
+:where(input, textarea, select):focus {
+  border-color: var(--ink);
 }

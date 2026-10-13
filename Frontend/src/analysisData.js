@@ -24,7 +24,7 @@ export const similarSolutions = [
     name: 'Roomba (iRobot)',
     type: 'Consumer Product',
     icon: 'bot',
-    iconBg: 'bg-violet-100 text-violet-600',
+    iconBg: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     description:
       'Uses cameras and sensors to navigate and clean spaces. Shows how robot navigation and object detection work in real environments.',
     capabilities: ['Navigation', 'Object Detection'],
@@ -34,7 +34,7 @@ export const similarSolutions = [
     name: 'Google DeepMind – Robotics',
     type: 'Research Paper',
     icon: 'brain',
-    iconBg: 'bg-blue-500 text-white',
+    iconBg: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     description:
       'Research on robotic manipulation and visual perception. Demonstrates how AI models can identify and interact with objects in real-world settings.',
     capabilities: ['Object Recognition', 'Navigation'],
@@ -44,7 +44,7 @@ export const similarSolutions = [
     name: 'OpenVINO + ROS',
     type: 'Open Source Project',
     icon: 'cpu',
-    iconBg: 'bg-gray-900 text-white',
+    iconBg: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     description:
       'Provides tools for object detection and robot control. Often used in research and student projects for autonomous robots.',
     capabilities: ['Object Detection', 'Robot Control'],

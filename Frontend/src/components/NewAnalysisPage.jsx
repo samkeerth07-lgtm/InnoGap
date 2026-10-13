@@ -16,14 +16,14 @@ export default function NewAnalysisPage({ onSubmit }) {
   return (
     <div className="mx-auto max-w-3xl pb-8">
       <header className="mb-6">
-        <p className="mb-2 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-600">
-          <span className="h-2 w-2 rounded-full bg-[#e6ff1f]" />
+        <p className="mb-2 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text)]">
+          <span className="h-2 w-2 rounded-full bg-[var(--text)]" />
           Research workspace
         </p>
-        <h1 className="text-3xl font-semibold tracking-tight text-[#202426]">
+        <h1 className="text-3xl font-semibold tracking-tight text-[var(--ink)]">
           Start New Analysis
         </h1>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+        <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text)]">
           Tell us your idea and we&rsquo;ll analyze existing solutions and find the gap.
         </p>
       </header>
@@ -33,7 +33,7 @@ export default function NewAnalysisPage({ onSubmit }) {
           event.preventDefault()
           handleSubmit()
         }}
-        className="rounded-[24px] border border-white/80 bg-white/80 p-5 shadow-[0_16px_40px_rgba(41,45,46,0.06)] backdrop-blur sm:p-7"
+        className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)] backdrop-blur sm:p-7"
       >
         <div className="space-y-7">
           <FormField
@@ -55,15 +55,15 @@ export default function NewAnalysisPage({ onSubmit }) {
           />
         </div>
 
-        <div className="mt-7 flex justify-end border-t border-slate-100 pt-5">
+        <div className="mt-7 flex justify-end border-t border-[var(--border)] pt-5">
         <button
           type="submit"
           disabled={!isValid}
           aria-disabled={!isValid}
           className={`flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-colors ${
             isValid
-              ? 'bg-[#e6ff1f] text-[#202426] shadow-sm hover:bg-[#d9f216]'
-              : 'cursor-not-allowed bg-slate-200 text-slate-500'
+              ? 'bg-[var(--accent)] text-[var(--on-accent)] shadow-sm hover:brightness-95'
+              : 'cursor-not-allowed bg-[var(--accent-disabled)] text-[var(--on-accent)]'
           }`}
         >
           Start Analysis
