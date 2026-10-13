@@ -7,14 +7,14 @@ export const sourceFilters = [
 ]
 
 const BADGE_STYLES = {
-  'Consumer Product': 'bg-blue-50 text-blue-600',
-  'Research Paper': 'bg-violet-50 text-violet-600',
-  'Open Source Project': 'bg-emerald-50 text-emerald-600',
-  Patent: 'bg-amber-50 text-amber-600',
+  'Consumer Product': 'bg-[var(--icon-tile)] text-[var(--ink)]',
+  'Research Paper': 'bg-[var(--icon-tile)] text-[var(--ink)]',
+  'Open Source Project': 'bg-[var(--icon-tile)] text-[var(--ink)]',
+  Patent: 'bg-[var(--icon-tile)] text-[var(--ink)]',
 }
 
 export function badgeClass(badge) {
-  return BADGE_STYLES[badge] ?? 'bg-gray-100 text-gray-600'
+  return BADGE_STYLES[badge] ?? 'bg-[var(--icon-tile)] text-[var(--ink)]'
 }
 
 export const sources = [
@@ -24,7 +24,7 @@ export const sources = [
     badge: 'Consumer Product',
     category: 'products',
     icon: 'bot',
-    iconStyle: 'bg-white text-violet-600 ring-2 ring-violet-200',
+    iconStyle: 'bg-[var(--icon-tile)] text-[var(--ink)] ring-2 ring-[var(--border)]',
     summary:
       'Uses cameras and sensors to navigate and clean spaces. Shows how robot navigation and object detection work in real environments.',
     detail: {
@@ -49,7 +49,7 @@ export const sources = [
     badge: 'Research Paper',
     category: 'research-papers',
     icon: 'google',
-    iconStyle: 'bg-white ring-2 ring-gray-200',
+    iconStyle: 'bg-[var(--icon-tile)] text-[var(--ink)] ring-2 ring-[var(--border)]',
     summary:
       'Research on robotic manipulation and visual perception. Demonstrates how AI models can identify and interact with objects in real-world settings.',
     detail: {
@@ -74,7 +74,7 @@ export const sources = [
     badge: 'Open Source Project',
     category: 'open-source',
     icon: 'cpu',
-    iconStyle: 'bg-gray-900 text-white ring-2 ring-emerald-200',
+    iconStyle: 'bg-[var(--icon-tile)] text-[var(--ink)] ring-2 ring-[var(--border)]',
     summary:
       'Provides tools for object detection and robot control. Often used in research and student projects for autonomous robots.',
     detail: {
@@ -99,7 +99,7 @@ export const sources = [
     badge: 'Patent',
     category: 'patents',
     icon: 'scroll',
-    iconStyle: 'bg-white text-amber-600 ring-2 ring-amber-200',
+    iconStyle: 'bg-[var(--icon-tile)] text-[var(--ink)] ring-2 ring-[var(--border)]',
     summary:
       'Method for object recognition and tracking using visual data and machine learning.',
     detail: {
@@ -124,7 +124,7 @@ export const sources = [
     badge: 'Open Source Project',
     category: 'products',
     icon: 'github',
-    iconStyle: 'bg-gray-900 text-white ring-2 ring-gray-200',
+    iconStyle: 'bg-[var(--icon-tile)] text-[var(--ink)] ring-2 ring-[var(--border)]',
     summary:
       'Student project that combines object detection with robot navigation to fetch objects.',
     detail: {
@@ -149,7 +149,7 @@ export const sources = [
     badge: 'Consumer Product',
     category: 'products',
     icon: 'box',
-    iconStyle: 'bg-blue-500 text-white',
+    iconStyle: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     summary: 'Home robot with object recognition and movement capabilities.',
     detail: {
       fullDescription:

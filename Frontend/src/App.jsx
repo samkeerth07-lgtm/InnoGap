@@ -158,7 +158,7 @@ export default function App() {
 
         result:
           result.overallResult?.toUpperCase() ||
-          'ANALYZED',
+          '',
 
         date: formatToday(),
 
@@ -209,11 +209,11 @@ export default function App() {
       icon: 'bookmark',
 
       iconBg:
-        'bg-blue-50 text-blue-500',
+        'bg-[var(--success-bg)] text-[var(--success-text)]',
 
       result:
         activeResult.overallResult?.toUpperCase() ||
-        'ANALYZED',
+        '',
 
       date: formatToday(),
 
@@ -248,7 +248,7 @@ export default function App() {
 
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#e8efff] text-[#202426]">
+    <div className="flex h-screen flex-col overflow-hidden bg-[var(--bg)] text-[var(--ink)]">
 
       {/* =========================================
           FIXED SIDEBAR
@@ -263,7 +263,7 @@ export default function App() {
           SCROLLABLE MAIN AREA
       ========================================== */}
       <main
-        className="relative min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-[radial-gradient(ellipse_at_70%_0%,rgba(255,255,255,0.9),transparent_42%),linear-gradient(135deg,#e8f2ff_0%,#e8eaff_48%,#f2f5ff_100%)]"
+        className="relative min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-[linear-gradient(135deg,var(--bg)_0%,var(--bg-edge)_100%)]"
       >
         <div
           className="

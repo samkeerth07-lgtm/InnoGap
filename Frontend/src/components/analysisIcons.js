@@ -12,4 +12,4 @@ export const ANALYSIS_ICONS = {
 // Used for analyses created at runtime (from the New Analysis form),
 // since we don't yet know a more fitting icon for a freshly typed idea.
 export const DEFAULT_NEW_ANALYSIS_ICON = 'sparkles'
-export const DEFAULT_NEW_ANALYSIS_ICON_BG = 'bg-indigo-50 text-indigo-500'
+export const DEFAULT_NEW_ANALYSIS_ICON_BG = 'bg-[var(--icon-tile)] text-[var(--ink)]'

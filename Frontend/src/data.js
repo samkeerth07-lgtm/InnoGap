@@ -1,11 +1,19 @@
-export const RESULT_STYLES = {
-  'PARTIALLY EXISTING': 'bg-amber-50 text-amber-700',
-  'HIGHLY SIMILAR': 'bg-rose-50 text-rose-600',
-  'NEW-LOOKING': 'bg-emerald-50 text-emerald-600',
-}
-
 export function resultBadgeClass(result) {
-  return RESULT_STYLES[result] ?? 'bg-gray-100 text-gray-600'
+  const value = String(result ?? '').toLowerCase().replace(/[-_]+/g, ' ').trim()
+
+  if (value.includes('new') || value.includes('low')) {
+    return 'bg-[var(--success-bg)] text-[var(--success-text)]'
+  }
+
+  if (value.includes('partial') || value.includes('medium')) {
+    return 'bg-[var(--warning-bg)] text-[var(--warning-text)]'
+  }
+
+  if (value.includes('similar') || value.includes('high')) {
+    return 'bg-[var(--danger-bg)] text-[var(--danger-text)]'
+  }
+
+  return 'bg-[var(--icon-tile)] text-[var(--ink)]'
 }
 
 // Seed data for the analyses list — analyses created via "New Analysis"
@@ -15,7 +23,7 @@ export const initialAnalyses = [
     id: 1,
     title: 'AI Robot that finds misplaced objects',
     icon: 'bot',
-    iconBg: 'bg-blue-50 text-blue-500',
+    iconBg: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     result: 'PARTIALLY EXISTING',
     date: '20 May 2025',
   },
@@ -23,7 +31,7 @@ export const initialAnalyses = [
     id: 2,
     title: 'Smart Dustbin with Auto Waste Segregation',
     icon: 'trash',
-    iconBg: 'bg-emerald-50 text-emerald-500',
+    iconBg: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     result: 'HIGHLY SIMILAR',
     date: '19 May 2025',
   },
@@ -31,7 +39,7 @@ export const initialAnalyses = [
     id: 3,
     title: 'Solar Powered Smart Irrigation System',
     icon: 'sprout',
-    iconBg: 'bg-violet-50 text-violet-500',
+    iconBg: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     result: 'PARTIALLY EXISTING',
     date: '18 May 2025',
   },
@@ -39,7 +47,7 @@ export const initialAnalyses = [
     id: 4,
     title: 'Portable Health Monitor for Rural Areas',
     icon: 'heart',
-    iconBg: 'bg-sky-50 text-sky-500',
+    iconBg: 'bg-[var(--icon-tile)] text-[var(--ink)]',
     result: 'NEW-LOOKING',
     date: '16 May 2025',
   },
