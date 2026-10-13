@@ -56,7 +56,7 @@ export default function Sidebar({
                 type="button"
                 title={label}
                 onClick={() => onNavigate?.(key)}
-                className={`group flex shrink-0 items-center gap-2 rounded-full px-2.5 py-2 text-left text-xs font-semibold transition-all duration-200 sm:px-4 ${
+                className={`group flex shrink-0 items-center gap-1 rounded-full px-2.5 py-2 text-left text-xs font-semibold transition-all duration-200 sm:px-4 ${
                   isActive
                     ? 'bg-[#e6ff1f] text-[#202426] shadow-sm'
                     : 'text-white/65 hover:bg-white/10 hover:text-white'

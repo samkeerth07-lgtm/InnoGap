@@ -39,17 +39,17 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="rounded-[28px] border border-white/75 bg-white/55 p-5 shadow-[0_18px_48px_rgba(83,105,156,0.08)] backdrop-blur-xl sm:p-6">
+    <section className="rounded-[28px] border border-white/10 bg-[#292d2e] p-5 text-white shadow-[0_24px_55px_rgba(30,38,44,0.16)] sm:p-6">
       <div className="mb-6">
-        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#e6ff1f]">
           The InnoGap process
         </p>
 
-        <h2 className="mt-1 text-lg font-semibold text-slate-950">
+        <h2 className="mt-1 text-lg font-semibold text-white">
           How InnoGap Works
         </h2>
 
-        <p className="mt-1 text-xs leading-5 text-slate-400">
+        <p className="mt-1 text-xs leading-5 text-white/50">
           From your idea to a clearer picture.
         </p>
       </div>
@@ -65,25 +65,25 @@ export default function HowItWorks() {
             >
               {/* connector */}
               {index < STEPS.length - 1 && (
-                <div className="absolute left-5 top-11 h-8 w-px bg-slate-300/70" />
+                <div className="absolute left-5 top-11 h-8 w-px bg-white/20" />
               )}
 
-              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e6ff1f] text-[#202426] transition group-hover:bg-[#292d2e] group-hover:text-[#e6ff1f]">
+              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/75 transition group-hover:bg-[#e6ff1f] group-hover:text-[#202426]">
                 <Icon className="h-4.5 w-4.5" />
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold tracking-wider text-slate-400">
+                  <span className="text-[10px] font-bold tracking-wider text-white/40">
                     {step.number}
                   </span>
 
-                  <h3 className="text-sm font-semibold text-slate-900">
+                  <h3 className="text-sm font-semibold text-white">
                     {step.title}
                   </h3>
                 </div>
 
-                <p className="mt-1 text-xs leading-5 text-slate-500">
+                <p className="mt-1 text-xs leading-5 text-white/65">
                   {step.description}
                 </p>
               </div>
