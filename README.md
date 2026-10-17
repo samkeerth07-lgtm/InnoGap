@@ -121,7 +121,7 @@ Redis is optional unless your implementation depends on it.
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/samkeerth07-lgtm/InnoGap.git
 cd InnoGap
 ```
 
