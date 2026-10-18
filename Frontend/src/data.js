@@ -1,5 +1,9 @@
 export function resultBadgeClass(result) {
-  const value = String(result ?? '').toLowerCase().replace(/[-_]+/g, ' ').trim()
+  const rawValue =
+    typeof result === 'object' && result !== null
+      ? result.similarity || result.verdict || result.label || result.text || ''
+      : result
+  const value = String(rawValue ?? '').toLowerCase().replace(/[-_]+/g, ' ').trim()
 
   if (value.includes('new') || value.includes('low')) {
     return 'bg-[var(--success-bg)] text-[var(--success-text)]'
