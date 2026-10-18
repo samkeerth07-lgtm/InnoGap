@@ -5,7 +5,12 @@ import VerdictBadge from './VerdictBadge'
 
 export default function SourceDetailPanel({ source }) {
   const { detail } = source
-  const similarity = detail?.similarity && typeof detail.similarity === 'object' ? detail.similarity : null
+  const similarity =
+    detail?.similarity && typeof detail.similarity === 'object'
+      ? detail.similarity
+      : typeof detail?.similarity === 'string'
+      ? { similarity: detail.similarity }
+      : null
 
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">

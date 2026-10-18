@@ -16,6 +16,14 @@ import {
 import { mockAnalysisResult } from '../analysisData'
 import VerdictBadge from './VerdictBadge'
 
+function getSimilarityLabel(similarity) {
+  if (!similarity) return 'Related'
+  if (typeof similarity === 'object' && similarity !== null) {
+    return similarity.similarity || 'Related'
+  }
+  return String(similarity)
+}
+
 function EvidenceBadge({ label, active = true }) {
   return (
     <span
@@ -73,8 +81,9 @@ export default function AnalysisResultPage({
   onViewAllSources,
   isSaved = false,
   onSaveReport,
+  initialSelectedSolution = null,
 }) {
-  const [selectedSolution, setSelectedSolution] = useState(null)
+  const [selectedSolution, setSelectedSolution] = useState(initialSelectedSolution)
 
   const solutions = result.similarSolutions || []
 
@@ -397,7 +406,7 @@ export default function AnalysisResultPage({
                         </div>
 
                         <VerdictBadge
-                          value={solution.similarity || 'Related'}
+                          value={getSimilarityLabel(solution.similarity)}
                           className="inline-flex w-fit rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide"
                         />
                       </div>
@@ -532,7 +541,7 @@ export default function AnalysisResultPage({
                   </p>
 
                   <VerdictBadge
-                    value={selectedSolution.similarity || 'Related'}
+                    value={getSimilarityLabel(selectedSolution.similarity)}
                     className="mt-3 inline-flex rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide"
                   />
                 </div>
@@ -618,7 +627,8 @@ export default function AnalysisResultPage({
                 </div>
               )}
 
-              {(selectedSolution.reason ||
+              {(selectedSolution.similarity?.reason ||
+                selectedSolution.reason ||
                 selectedSolution.solution) && (
                 <div className="mt-6 border-t border-[var(--border)] pt-6">
                   <h3 className="text-sm font-semibold text-[var(--ink)]">
@@ -626,11 +636,53 @@ export default function AnalysisResultPage({
                   </h3>
 
                   <p className="mt-2 text-sm leading-6 text-[var(--text)]">
-                    {selectedSolution.reason ||
+                    {selectedSolution.similarity?.reason ||
+                      selectedSolution.reason ||
                       selectedSolution.solution}
                   </p>
                 </div>
               )}
+
+              {Array.isArray(selectedSolution.similarity?.overlap) &&
+                selectedSolution.similarity.overlap.length > 0 && (
+                  <div className="mt-6 border-t border-[var(--border)] pt-6">
+                    <h3 className="text-sm font-semibold text-[var(--ink)]">
+                      Common Capabilities
+                    </h3>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {selectedSolution.similarity.overlap.map((item) => (
+                        <span
+                          key={item}
+                          className="rounded-lg border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1.5 text-xs font-medium text-[var(--ink)]"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {Array.isArray(selectedSolution.similarity?.differences) &&
+                selectedSolution.similarity.differences.length > 0 && (
+                  <div className="mt-6 border-t border-[var(--border)] pt-6">
+                    <h3 className="text-sm font-semibold text-[var(--ink)]">
+                      Key Differences
+                    </h3>
+
+                    <ul className="mt-3 space-y-2">
+                      {selectedSolution.similarity.differences.map((item) => (
+                        <li
+                          key={item}
+                          className="flex gap-2 text-sm leading-6 text-[var(--text)]"
+                        >
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--muted)]" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
               {selectedSolution.sourceUrl && (
                 <div className="mt-8">
