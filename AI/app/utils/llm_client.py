@@ -1,3 +1,4 @@
+import asyncio
 import json
 import re
 from typing import Any, Dict, Optional, Type, TypeVar
@@ -87,8 +88,9 @@ class LLMClient:
 
             except Exception as e:
                 last_error = e
-                # On retry, instruct model to strictly format valid JSON
+                # On retry, instruct model to strictly format valid JSON with backoff
                 if attempt < max_retries:
+                    await asyncio.sleep(1.5 * (attempt + 1))
                     retry_msg = (
                         f"Your previous response was invalid JSON or did not match the expected schema ({str(e)}). "
                         "Please output ONLY the raw, strictly valid JSON object conforming to the required schema."

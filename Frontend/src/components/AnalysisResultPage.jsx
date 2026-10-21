@@ -1,15 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   ArrowLeft,
   ArrowRight,
+  Bookmark,
   CheckCircle2,
-  Download,
+  Copy,
   ExternalLink,
   FileText,
   Github,
-  Lightbulb,
   Layers,
-  Search,
+  Lightbulb,
+  Printer,
+  RefreshCw,
+  Target,
   X,
 } from 'lucide-react'
 
@@ -30,12 +33,12 @@ function EvidenceBadge({ label, active = true }) {
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
         active
           ? 'bg-[var(--success-bg)] text-[var(--success-text)]'
-          : 'bg-[var(--icon-tile)] text-[var(--text)]'
+          : 'bg-[var(--icon-tile)] text-[var(--muted)]'
       }`}
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${
-          active ? 'bg-[var(--success-text)]' : 'bg-[var(--muted)]'
+          active ? 'bg-[var(--success-text)]' : 'bg-[var(--icon-decor)]'
         }`}
       />
       {label}
@@ -81,160 +84,188 @@ export default function AnalysisResultPage({
   onViewAllSources,
   isSaved = false,
   onSaveReport,
+  onPivot,
   initialSelectedSolution = null,
 }) {
   const [selectedSolution, setSelectedSolution] = useState(initialSelectedSolution)
+  const [copied, setCopied] = useState(false)
 
   const solutions = result.similarSolutions || []
 
-  const evidenceStats = useMemo(() => {
-    let research = 0
-    let github = 0
-    let prototypes = 0
-    let demos = 0
-
-    solutions.forEach((solution) => {
-      const type = (solution.type || '').toLowerCase()
-      const implementation = solution.implementation || {}
-
-      if (type.includes('research') || type.includes('paper')) {
-        research += 1
-      }
-
-      if (
-        type.includes('github') ||
-        type.includes('open source')
-      ) {
-        github += 1
-      }
-
-      if (
-        implementation.prototypeMentioned ||
-        type.includes('prototype')
-      ) {
-        prototypes += 1
-      }
-
-      if (implementation.demoAvailable) {
-        demos += 1
-      }
-    })
-
-    return {
-      research,
-      github,
-      prototypes,
-      demos,
-    }
-  }, [solutions])
-
   const getImplementationEvidence = (solution) => {
     const implementation = solution?.implementation || {}
-
     return {
-      code:
-        implementation.codeAvailable ||
-        Boolean(solution?.sourceUrl),
-      runInstructions:
-        implementation.runInstructionsAvailable || false,
-      prototype:
-        implementation.prototypeMentioned || false,
-      demo:
-        implementation.demoAvailable || false,
-      deployment:
-        implementation.deploymentMentioned || false,
+      code: implementation.codeAvailable || Boolean(solution?.sourceUrl),
+      runInstructions: implementation.runInstructionsAvailable || false,
+      prototype: implementation.prototypeMentioned || false,
+      demo: implementation.demoAvailable || false,
+      deployment: implementation.deploymentMentioned || false,
     }
   }
 
+  const handleCopySummary = () => {
+    const markdown = `# InnoGap Analysis: ${result.title || 'Innovation Analysis'}
+**Verdict:** ${result.overallResult || 'Analyzed'}
+**Verdict Note:** ${result.overallResultNote || ''}
+
+### Proposed Innovation
+${result.proposed || ''}
+
+### Innovation Gap
+${result.potentialGap || ''}
+
+### Executive Summary
+${result.summary || ''}
+`
+    navigator.clipboard?.writeText(markdown)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+
+  const handlePrint = () => {
+    window.print()
+  }
+
   return (
-    <div className="min-h-full">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+    <div className="min-h-full pb-16 space-y-6">
+      {/* Top Navigation & Action Suite */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <button
           type="button"
           onClick={onBack}
-          className="group flex items-center gap-2 text-sm font-medium text-[var(--text)] transition hover:text-[var(--ink)]"
+          className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs font-bold text-[var(--ink)] shadow-[var(--card-shadow)] transition hover:bg-[var(--icon-tile)] hover:-translate-y-0.5"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
           Back to Dashboard
         </button>
 
-        <button
-          type="button"
-          className="hidden items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] shadow-sm transition hover:border-[var(--border)] hover:bg-[var(--bg)] md:flex"
-          onClick={onSaveReport}
-          disabled={isSaved}
-        >
-          {isSaved ? (
-            <CheckCircle2 className="h-4 w-4 text-[var(--success-text)]" />
-          ) : (
-            <Download className="h-4 w-4" />
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Copy Markdown */}
+          <button
+            type="button"
+            onClick={handleCopySummary}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-xs font-bold text-[var(--ink)] shadow-sm hover:bg-[var(--icon-tile)] transition"
+          >
+            {copied ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5 text-[var(--success-text)]" />
+                Copied Markdown!
+              </>
+            ) : (
+              <>
+                <Copy className="h-3.5 w-3.5 text-[var(--muted)]" />
+                Copy Summary
+              </>
+            )}
+          </button>
+
+          {/* Print */}
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-xs font-bold text-[var(--ink)] shadow-sm hover:bg-[var(--icon-tile)] transition"
+          >
+            <Printer className="h-3.5 w-3.5 text-[var(--muted)]" />
+            Print Report
+          </button>
+
+          {/* Pivot Idea Button */}
+          {onPivot && (
+            <button
+              type="button"
+              onClick={() => onPivot(result)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-xs font-bold text-[var(--ink)] shadow-sm hover:bg-[var(--icon-tile)] transition"
+            >
+              <RefreshCw className="h-3.5 w-3.5 text-[var(--muted)]" />
+              Pivot Idea
+            </button>
           )}
-          {isSaved ? 'Saved' : 'Save Report'}
-        </button>
+
+          {/* Save Button */}
+          <button
+            type="button"
+            onClick={onSaveReport}
+            disabled={isSaved}
+            className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs font-bold shadow-sm transition hover:-translate-y-0.5 ${
+              isSaved
+                ? 'border border-green-200 bg-[var(--success-bg)] text-[var(--success-text)]'
+                : 'bg-[var(--accent)] text-[var(--on-accent)] hover:brightness-95'
+            }`}
+          >
+            {isSaved ? (
+              <CheckCircle2 className="h-4 w-4 text-[var(--success-text)]" />
+            ) : (
+              <Bookmark className="h-4 w-4" />
+            )}
+            {isSaved ? 'Saved to Ideas' : 'Save Report'}
+          </button>
+        </div>
       </div>
 
-      {/* Page heading */}
-      <div className="mb-7">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1 text-xs font-semibold text-[var(--ink)]">
-            <CheckCircle2 className="h-3.5 w-3.5" />
+      {/* Title & Status Header */}
+      <div>
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1 text-[11px] font-bold text-[var(--ink)]">
+            <CheckCircle2 className="h-3.5 w-3.5 text-[var(--success-text)]" />
             {result.status || 'Analysis Complete'}
           </span>
-
-          <span className="text-xs text-[var(--text)]">
-            Innovation analysis
+          <span className="text-xs font-semibold text-[var(--muted)]">
+            Innovation Intelligence Brief
           </span>
         </div>
 
-        <h1 className="max-w-4xl text-3xl font-semibold tracking-tight text-[var(--ink)]">
+        <h1 className="max-w-4xl text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
           {result.title}
         </h1>
 
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text)]">
+        <p className="mt-2.5 max-w-3xl text-sm leading-6 text-[var(--text)]">
           {result.description}
         </p>
       </div>
 
-      {/* Main result */}
-      <section className="mb-6 overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--card-shadow)]">
-        <div className="p-6 md:p-8">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-                Overall result
-              </p>
+      {/* Hero: Executive Verdict */}
+      <section className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] sm:p-8">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[var(--icon-tile)] blur-3xl opacity-70" />
 
-              <h2 className="text-2xl font-semibold tracking-tight text-[var(--ink)]">
-                {result.overallResult}
-              </h2>
+        <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--muted)]">
+              Executive Verdict
+            </p>
 
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text)]">
-                {result.overallResultNote}
-              </p>
-            </div>
+            <h2 className="mt-1 text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl">
+              {result.overallResult}
+            </h2>
 
-            <div className="flex h-20 min-w-20 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-5 shadow-[var(--card-shadow)]">
-              <VerdictBadge value={result.overallResult} className="text-center text-sm font-semibold" />
-            </div>
+            <p className="mt-2 text-sm leading-6 text-[var(--text)]">
+              {result.overallResultNote}
+            </p>
+          </div>
+
+          <div className="flex shrink-0 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-2 shadow-[var(--card-shadow)]">
+            <VerdictBadge
+              value={result.overallResult}
+              className="inline-flex rounded-xl px-5 py-3 text-sm font-bold uppercase tracking-wider shadow-sm"
+            />
           </div>
         </div>
       </section>
 
-      {/* Your approach vs existing */}
-      <section className="mb-6 grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
+      {/* The Core Comparison: Your Proposed Approach vs The Potential Gap */}
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        {/* Your Proposed Approach */}
+        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
           <div className="mb-4 flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--icon-tile)] text-[var(--ink)]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--on-accent)] shadow-sm">
               <Lightbulb className="h-5 w-5" />
             </span>
 
             <div>
-              <h2 className="font-semibold text-[var(--ink)]">
-                Your Approach
+              <h2 className="text-base font-bold text-[var(--ink)]">
+                Your Proposed Approach
               </h2>
               <p className="text-xs text-[var(--muted)]">
-                What you proposed
+                User hypothesis
               </p>
             </div>
           </div>
@@ -242,136 +273,89 @@ export default function AnalysisResultPage({
           <p className="text-sm leading-6 text-[var(--text)]">
             {result.proposed}
           </p>
-        </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--icon-tile)] text-[var(--ink)]">
-              <Search className="h-5 w-5" />
-            </span>
-
-            <div>
-              <h2 className="font-semibold text-[var(--ink)]">
-                What Already Exists
-              </h2>
-              <p className="text-xs text-[var(--muted)]">
-                Technologies and approaches discovered
+          {result.existingTech?.length > 0 && (
+            <div className="mt-5 border-t border-[var(--border)] pt-4">
+              <p className="text-xs font-semibold text-[var(--muted)] mb-2">
+                Core Technologies & Concepts:
               </p>
+              <div className="flex flex-wrap gap-2">
+                {result.existingTech.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-xl border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1 text-xs font-semibold text-[var(--ink)]"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {result.existingTech?.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-lg border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1.5 text-xs font-medium text-[var(--ink)]"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
+          )}
         </div>
-      </section>
 
-      {/* Potential gap */}
-      <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] md:p-7">
-        <div className="mb-4 flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--icon-tile)] text-[var(--ink)]">
-            <Layers className="h-5 w-5" />
-          </span>
-
+        {/* The Innovation Gap (The Unsolved Opportunity) */}
+        <div className="dark-surface rounded-[24px] border border-[var(--border)] bg-[var(--ink)] p-6 text-[var(--surface)] shadow-[var(--card-shadow)] flex flex-col justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-              The important part
-            </p>
+            <div className="mb-4 flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--ink-raised)] text-[var(--accent)]">
+                <Target className="h-5 w-5" />
+              </span>
 
-            <h2 className="text-xl font-semibold text-[var(--ink)]">
-              Potential Gap
-            </h2>
-          </div>
-        </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
+                  The Innovation Opportunity
+                </p>
+                <h2 className="text-base font-bold text-[var(--surface)]">
+                  Identified Research Gap
+                </h2>
+              </div>
+            </div>
 
-        <p className="max-w-4xl text-sm leading-7 text-[var(--text)]">
-          {result.potentialGap}
-        </p>
-      </section>
-
-      {/* Evidence overview */}
-      <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
-        <div className="mb-5">
-          <h2 className="text-base font-semibold text-[var(--ink)]">
-            Evidence Found
-          </h2>
-
-          <p className="mt-1 text-sm text-[var(--text)]">
-            Different types of evidence discovered during the analysis.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--card-shadow)]">
-            <p className="text-xs font-medium text-[var(--muted)]">
-              Research Papers
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
-              {evidenceStats.research}
+            <p className="text-sm leading-7 text-[var(--dark-text)]">
+              {result.potentialGap}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--card-shadow)]">
-            <p className="text-xs font-medium text-[var(--muted)]">
-              Open Source
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
-              {evidenceStats.github}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--card-shadow)]">
-            <p className="text-xs font-medium text-[var(--muted)]">
-              Prototypes
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
-              {evidenceStats.prototypes}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--card-shadow)]">
-            <p className="text-xs font-medium text-[var(--muted)]">
-              Demos
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
-              {evidenceStats.demos}
-            </p>
-          </div>
+          {onPivot && (
+            <div className="mt-6 border-t border-[var(--ink-raised)] pt-4">
+              <button
+                type="button"
+                onClick={() => onPivot(result)}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--accent)] hover:underline"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Want to tweak your angle? Pivot Idea & Re-Analyze →
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Existing solutions */}
-      <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
+      {/* Discovered Prior Art & Existing Solutions */}
+      <section className="rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-              Discovery
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--muted)]">
+              Discovered Prior Art
             </p>
-
-            <h2 className="mt-1 text-xl font-semibold text-[var(--ink)]">
-              Existing Solutions
+            <h2 className="mt-1 text-xl font-bold text-[var(--ink)] sm:text-2xl">
+              Existing Solutions & Publications
             </h2>
-
-            <p className="mt-1 text-sm text-[var(--text)]">
-              Ranked results related to your proposed approach.
+            <p className="mt-1 text-xs text-[var(--muted)]">
+              Ranked repositories and papers related to your proposed approach. Click any item to inspect details.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={onViewAllSources}
-            className="flex items-center gap-1.5 text-sm font-medium text-[var(--ink)] transition hover:text-[var(--text)]"
-          >
-            View all sources
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          {onViewAllSources && (
+            <button
+              type="button"
+              onClick={onViewAllSources}
+              className="group inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs font-bold text-[var(--ink)] shadow-sm transition hover:-translate-y-0.5 hover:bg-[var(--icon-tile)]"
+            >
+              View all sources
+              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </button>
+          )}
         </div>
 
         <div className="space-y-3">
@@ -384,10 +368,10 @@ export default function AnalysisResultPage({
                   key={solution.id}
                   type="button"
                   onClick={() => setSelectedSolution(solution)}
-                  className="group w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition hover:border-[var(--border)] hover:bg-[var(--bg)] hover:shadow-[var(--card-shadow)]"
+                  className="group w-full rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--muted)] hover:shadow-md"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="hidden pt-1 text-xs font-semibold text-[var(--muted)] sm:block">
+                    <div className="hidden pt-1 text-xs font-bold text-[var(--muted)] sm:block">
                       {String(index + 1).padStart(2, '0')}
                     </div>
 
@@ -396,18 +380,18 @@ export default function AnalysisResultPage({
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                         <div>
-                          <h3 className="font-semibold text-[var(--ink)] transition group-hover:text-[var(--ink)]">
+                          <h3 className="font-bold text-[var(--ink)] transition group-hover:text-[var(--ink)]">
                             {solution.name}
                           </h3>
 
-                          <p className="mt-0.5 text-xs text-[var(--muted)]">
+                          <p className="mt-0.5 text-xs font-medium text-[var(--muted)]">
                             {solution.type}
                           </p>
                         </div>
 
                         <VerdictBadge
                           value={getSimilarityLabel(solution.similarity)}
-                          className="inline-flex w-fit rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide"
+                          className="inline-flex w-fit rounded-full border border-[var(--border)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider shadow-sm"
                         />
                       </div>
 
@@ -417,30 +401,15 @@ export default function AnalysisResultPage({
                           'No description available.'}
                       </p>
 
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <EvidenceBadge
-                          label="Source Code"
-                          active={evidence.code}
-                        />
-
-                        <EvidenceBadge
-                          label="Run Instructions"
-                          active={evidence.runInstructions}
-                        />
-
-                        <EvidenceBadge
-                          label="Prototype"
-                          active={evidence.prototype}
-                        />
-
-                        <EvidenceBadge
-                          label="Demo"
-                          active={evidence.demo}
-                        />
+                      <div className="mt-3.5 flex flex-wrap gap-2">
+                        <EvidenceBadge label="Source Code" active={evidence.code} />
+                        <EvidenceBadge label="Run Instructions" active={evidence.runInstructions} />
+                        <EvidenceBadge label="Prototype" active={evidence.prototype} />
+                        <EvidenceBadge label="Demo" active={evidence.demo} />
                       </div>
                     </div>
 
-                    <div className="hidden pt-2 text-[var(--muted)] transition group-hover:text-[var(--ink)] sm:block">
+                    <div className="hidden pt-2 text-[var(--muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--ink)] sm:block">
                       <ArrowRight className="h-5 w-5" />
                     </div>
                   </div>
@@ -449,10 +418,9 @@ export default function AnalysisResultPage({
             })
           ) : (
             <div className="rounded-2xl border border-dashed border-[var(--border)] p-10 text-center">
-              <p className="text-sm font-medium text-[var(--text)]">
+              <p className="text-sm font-semibold text-[var(--text)]">
                 No similar solutions were found.
               </p>
-
               <p className="mt-1 text-xs text-[var(--muted)]">
                 Try another problem statement or proposed solution.
               </p>
@@ -461,18 +429,17 @@ export default function AnalysisResultPage({
         </div>
       </section>
 
-      {/* Summary */}
-      <section className="mb-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
-        <div className="flex items-start gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--icon-tile)] text-[var(--ink)]">
-            <FileText className="h-4 w-4" />
+      {/* Executive Summary */}
+      <section className="rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]">
+        <div className="flex items-start gap-4">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--icon-tile)] text-[var(--ink)]">
+            <FileText className="h-5 w-5" />
           </span>
 
           <div>
-            <h3 className="font-semibold text-[var(--ink)]">
-              Summary
+            <h3 className="text-base font-bold text-[var(--ink)]">
+              Executive Summary
             </h3>
-
             <p className="mt-2 max-w-4xl text-sm leading-6 text-[var(--text)]">
               {result.summary}
             </p>
@@ -480,29 +447,7 @@ export default function AnalysisResultPage({
         </div>
       </section>
 
-      {/* Mobile save button */}
-      <div className="mb-6 md:hidden">
-        <button
-          type="button"
-          onClick={onSaveReport}
-          disabled={isSaved}
-          className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-medium ${
-            isSaved
-              ? 'bg-[var(--success-bg)] text-[var(--success-text)]'
-              : 'dark-surface bg-[var(--ink)] text-[var(--surface)] hover:bg-[var(--ink-raised)]'
-          }`}
-        >
-          {isSaved ? (
-            <CheckCircle2 className="h-4 w-4" />
-          ) : (
-            <Download className="h-4 w-4" />
-          )}
-
-          {isSaved ? 'Saved' : 'Save Report'}
-        </button>
-      </div>
-
-      {/* Detail drawer */}
+      {/* Detail Slide-over Drawer */}
       {selectedSolution && (
         <div className="fixed inset-0 z-50">
           <button
@@ -513,15 +458,15 @@ export default function AnalysisResultPage({
           />
 
           <aside className="absolute right-0 top-0 flex h-full w-full max-w-xl flex-col overflow-y-auto border-l border-[var(--border)] bg-[var(--surface)] shadow-[var(--card-shadow)]">
-            <div className="sticky top-0 flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface)] px-6 py-4 backdrop-blur">
-              <p className="text-sm font-semibold text-[var(--ink)]">
-                Solution Details
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface)] px-6 py-4 backdrop-blur">
+              <p className="text-sm font-bold text-[var(--ink)]">
+                Candidate Solution Details
               </p>
 
               <button
                 type="button"
                 onClick={() => setSelectedSolution(null)}
-                className="rounded-lg p-2 text-[var(--muted)] transition hover:bg-[var(--bg)] hover:text-[var(--ink)]"
+                className="rounded-full p-2 text-[var(--muted)] transition hover:bg-[var(--icon-tile)] hover:text-[var(--ink)]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -532,26 +477,25 @@ export default function AnalysisResultPage({
                 <SourceIcon type={selectedSolution.type} />
 
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-xl font-semibold text-[var(--ink)]">
+                  <h2 className="text-xl font-bold text-[var(--ink)]">
                     {selectedSolution.name}
                   </h2>
 
-                  <p className="mt-1 text-xs text-[var(--muted)]">
+                  <p className="mt-1 text-xs font-medium text-[var(--muted)]">
                     {selectedSolution.type}
                   </p>
 
                   <VerdictBadge
                     value={getSimilarityLabel(selectedSolution.similarity)}
-                    className="mt-3 inline-flex rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide"
+                    className="mt-3 inline-flex rounded-full border border-[var(--border)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="mt-6 border-t border-[var(--border)] pt-6">
-                <h3 className="text-sm font-semibold text-[var(--ink)]">
+                <h3 className="text-sm font-bold text-[var(--ink)]">
                   What it does
                 </h3>
-
                 <p className="mt-2 text-sm leading-6 text-[var(--text)]">
                   {selectedSolution.description ||
                     selectedSolution.solution ||
@@ -560,65 +504,33 @@ export default function AnalysisResultPage({
               </div>
 
               <div className="mt-6 border-t border-[var(--border)] pt-6">
-                <h3 className="text-sm font-semibold text-[var(--ink)]">
+                <h3 className="text-sm font-bold text-[var(--ink)]">
                   Implementation Evidence
                 </h3>
 
                 <div className="mt-3 flex flex-wrap gap-2">
                   {Object.entries({
-                    'Source Code':
-                      getImplementationEvidence(selectedSolution).code,
-                    'Run Instructions':
-                      getImplementationEvidence(selectedSolution)
-                        .runInstructions,
-                    Prototype:
-                      getImplementationEvidence(selectedSolution).prototype,
-                    Demo:
-                      getImplementationEvidence(selectedSolution).demo,
-                    Deployment:
-                      getImplementationEvidence(selectedSolution)
-                        .deployment,
+                    'Source Code': getImplementationEvidence(selectedSolution).code,
+                    'Run Instructions': getImplementationEvidence(selectedSolution).runInstructions,
+                    Prototype: getImplementationEvidence(selectedSolution).prototype,
+                    Demo: getImplementationEvidence(selectedSolution).demo,
+                    Deployment: getImplementationEvidence(selectedSolution).deployment,
                   }).map(([label, active]) => (
-                    <EvidenceBadge
-                      key={label}
-                      label={label}
-                      active={active}
-                    />
+                    <EvidenceBadge key={label} label={label} active={active} />
                   ))}
                 </div>
               </div>
 
-              {selectedSolution.whatItDoes?.length > 0 && (
-                <div className="mt-6 border-t border-[var(--border)] pt-6">
-                  <h3 className="text-sm font-semibold text-[var(--ink)]">
-                    What it does
-                  </h3>
-
-                  <ul className="mt-3 space-y-2">
-                    {selectedSolution.whatItDoes.map((item) => (
-                      <li
-                        key={item}
-                        className="flex gap-2 text-sm leading-6 text-[var(--text)]"
-                      >
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--muted)]" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
               {selectedSolution.technologies?.length > 0 && (
                 <div className="mt-6 border-t border-[var(--border)] pt-6">
-                  <h3 className="text-sm font-semibold text-[var(--ink)]">
+                  <h3 className="text-sm font-bold text-[var(--ink)]">
                     Technologies
                   </h3>
-
                   <div className="mt-3 flex flex-wrap gap-2">
                     {selectedSolution.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="rounded-lg border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1.5 text-xs font-medium text-[var(--ink)]"
+                        className="rounded-xl border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)]"
                       >
                         {tech}
                       </span>
@@ -631,10 +543,9 @@ export default function AnalysisResultPage({
                 selectedSolution.reason ||
                 selectedSolution.solution) && (
                 <div className="mt-6 border-t border-[var(--border)] pt-6">
-                  <h3 className="text-sm font-semibold text-[var(--ink)]">
-                    Why it matters
+                  <h3 className="text-sm font-bold text-[var(--ink)]">
+                    Why it matters (Competitive Overlap)
                   </h3>
-
                   <p className="mt-2 text-sm leading-6 text-[var(--text)]">
                     {selectedSolution.similarity?.reason ||
                       selectedSolution.reason ||
@@ -643,56 +554,15 @@ export default function AnalysisResultPage({
                 </div>
               )}
 
-              {Array.isArray(selectedSolution.similarity?.overlap) &&
-                selectedSolution.similarity.overlap.length > 0 && (
-                  <div className="mt-6 border-t border-[var(--border)] pt-6">
-                    <h3 className="text-sm font-semibold text-[var(--ink)]">
-                      Common Capabilities
-                    </h3>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {selectedSolution.similarity.overlap.map((item) => (
-                        <span
-                          key={item}
-                          className="rounded-lg border border-[var(--border)] bg-[var(--icon-tile)] px-3 py-1.5 text-xs font-medium text-[var(--ink)]"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-              {Array.isArray(selectedSolution.similarity?.differences) &&
-                selectedSolution.similarity.differences.length > 0 && (
-                  <div className="mt-6 border-t border-[var(--border)] pt-6">
-                    <h3 className="text-sm font-semibold text-[var(--ink)]">
-                      Key Differences
-                    </h3>
-
-                    <ul className="mt-3 space-y-2">
-                      {selectedSolution.similarity.differences.map((item) => (
-                        <li
-                          key={item}
-                          className="flex gap-2 text-sm leading-6 text-[var(--text)]"
-                        >
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--muted)]" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
               {selectedSolution.sourceUrl && (
                 <div className="mt-8">
                   <a
                     href={selectedSolution.sourceUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="dark-surface flex items-center justify-center gap-2 rounded-xl bg-[var(--ink)] px-4 py-3 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--ink-raised)]"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-5 py-3 text-sm font-bold text-[var(--on-accent)] shadow-[var(--card-shadow)] transition hover:brightness-95"
                   >
-                    Open Source
+                    Open Source Project / Paper
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </div>

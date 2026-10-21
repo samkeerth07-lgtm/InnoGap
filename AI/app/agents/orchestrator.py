@@ -257,9 +257,13 @@ class OrchestratorAgent:
 
     async def _step_evaluate_candidates(self, state: OrchestratorState) -> Dict[str, Any]:
         tasks = []
-        for repo in state.get("github_repos", []):
+        # Limit candidate evaluations to top 2 repos and top 2 papers to avoid timeouts
+        repos = state.get("github_repos", [])[:2]
+        works = state.get("openalex_works", [])[:2]
+
+        for repo in repos:
             tasks.append(self._evaluate_repo(repo, state))
-        for work in state.get("openalex_works", []):
+        for work in works:
             tasks.append(self._evaluate_paper(work, state))
 
         results = await asyncio.gather(*tasks, return_exceptions=True)

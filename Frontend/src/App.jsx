@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Sidebar from './components/Sidebar'
 import PageHeader from './components/PageHeader'
@@ -11,6 +11,7 @@ import AnalysisResultPage from './components/AnalysisResultPage'
 import SourcesPage from './components/SourcesPage'
 import MyAnalysesPage from './components/MyAnalysesPage'
 import SavedIdeasPage from './components/SavedIdeasPage'
+import CommandBarModal from './components/CommandBarModal'
 
 import { initialAnalyses } from './data'
 import { mockAnalysisResult } from './analysisData'
@@ -41,9 +42,43 @@ function formatToday() {
 
 export default function App() {
   const [page, setPage] = useState('dashboard')
-  const [analyses, setAnalyses] = useState(initialAnalyses)
-  const [savedIdeas, setSavedIdeas] = useState([])
+  const [analyses, setAnalyses] = useState(() => {
+    try {
+      const stored = localStorage.getItem('innogap_analyses')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch (_) {}
+    return initialAnalyses
+  })
+  const [savedIdeas, setSavedIdeas] = useState(() => {
+    try {
+      const stored = localStorage.getItem('innogap_saved_ideas')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed)) return parsed
+      }
+    } catch (_) {}
+    return []
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('innogap_analyses', JSON.stringify(analyses))
+    } catch (_) {}
+  }, [analyses])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('innogap_saved_ideas', JSON.stringify(savedIdeas))
+    } catch (_) {}
+  }, [savedIdeas])
   const [activeResult, setActiveResult] = useState(mockAnalysisResult)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analysisError, setAnalysisError] = useState(null)
+  const [isCommandBarOpen, setIsCommandBarOpen] = useState(false)
+  const [pivotData, setPivotData] = useState(null)
 
 
   // -----------------------------------
@@ -95,6 +130,10 @@ export default function App() {
 
       const result = await response.json()
 
+      setAnalyses((prev) =>
+        prev.map((a) => (a.id === item.id ? { ...a, resultData: result } : a))
+      )
+
       openResult(result)
 
     } catch (error) {
@@ -123,6 +162,8 @@ export default function App() {
     problem,
     solution,
   }) => {
+    setIsAnalyzing(true)
+    setAnalysisError(null)
     try {
       const response = await fetch(
         'http://localhost:5000/api/analysis',
@@ -139,9 +180,18 @@ export default function App() {
       )
 
       if (!response.ok) {
-        throw new Error(
-          `Analysis request failed with status ${response.status}`
-        )
+        let errMessage = `Analysis request failed with status ${response.status}`
+        try {
+          const errData = await response.json()
+          if (errData.message) {
+            errMessage = errData.message
+          } else if (errData.detail) {
+            errMessage = typeof errData.detail === 'string' ? errData.detail : JSON.stringify(errData.detail)
+          } else if (errData.error) {
+            errMessage = typeof errData.error === 'string' ? errData.error : JSON.stringify(errData.error)
+          }
+        } catch (_) {}
+        throw new Error(errMessage)
       }
 
       const result = await response.json()
@@ -183,6 +233,12 @@ export default function App() {
         'Unable to submit analysis:',
         error
       )
+      setAnalysisError(
+        error.message ||
+        'Analysis could not be completed. Please ensure backend services are running.'
+      )
+    } finally {
+      setIsAnalyzing(false)
     }
   }
 
@@ -287,9 +343,12 @@ export default function App() {
                 onStartAnalysis={() =>
                   setPage('new-analysis')
                 }
+                onOpenCommandBar={() =>
+                  setIsCommandBarOpen(true)
+                }
               />
 
-              <DashboardStats />
+              <DashboardStats analyses={analyses} savedIdeas={savedIdeas} />
 
               <div
                 className="
@@ -319,6 +378,11 @@ export default function App() {
           {page === 'new-analysis' && (
             <NewAnalysisPage
               onSubmit={handleSubmitAnalysis}
+              isAnalyzing={isAnalyzing}
+              error={analysisError}
+              onClearError={() => setAnalysisError(null)}
+              initialProblem={pivotData?.problem || ''}
+              initialSolution={pivotData?.solution || ''}
             />
           )}
 
@@ -359,6 +423,13 @@ export default function App() {
               }
               isSaved={isActiveResultSaved}
               onSaveReport={handleSaveReport}
+              onPivot={(res) => {
+                setPivotData({
+                  problem: res.problemStatement || res.title || '',
+                  solution: res.mySolution || res.proposed || '',
+                })
+                setPage('new-analysis')
+              }}
             />
           )}
 
@@ -382,6 +453,21 @@ export default function App() {
 
         </div>
       </main>
+
+      {/* Global Command Bar Modal (Cmd+K / Ctrl+K) */}
+      <CommandBarModal
+        isOpen={isCommandBarOpen}
+        onClose={() => setIsCommandBarOpen(false)}
+        analyses={analyses}
+        onSelectAnalysis={(item) => handleSelectAnalysis(item)}
+        onNavigate={(targetPage) => {
+          if (targetPage === 'command-bar-toggle') {
+            setIsCommandBarOpen((prev) => !prev)
+          } else {
+            setPage(targetPage)
+          }
+        }}
+      />
     </div>
   )
 }
