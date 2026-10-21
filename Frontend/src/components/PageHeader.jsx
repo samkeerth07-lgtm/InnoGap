@@ -7,7 +7,7 @@ import {
   Target,
 } from 'lucide-react'
 
-export default function PageHeader({ onStartAnalysis }) {
+export default function PageHeader({ onStartAnalysis, onOpenCommandBar }) {
   return (
     <section className="relative mb-5 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5 shadow-[var(--card-shadow)] backdrop-blur-sm sm:px-7 sm:py-6">
       {/* Background glow */}
@@ -47,7 +47,19 @@ export default function PageHeader({ onStartAnalysis }) {
               />
             </button>
 
-
+            {onOpenCommandBar && (
+              <button
+                type="button"
+                onClick={onOpenCommandBar}
+                className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-xs font-bold text-[var(--muted)] shadow-sm hover:text-[var(--ink)] hover:bg-[var(--icon-tile)] transition"
+              >
+                <Search className="h-3.5 w-3.5 text-[var(--muted)]" />
+                <span>Search ideas</span>
+                <kbd className="hidden sm:inline-block rounded bg-[var(--icon-tile)] px-1.5 py-0.5 text-[9px] font-mono font-bold text-[var(--ink)]">
+                  ⌘K
+                </kbd>
+              </button>
+            )}
           </div>
         </div>
 

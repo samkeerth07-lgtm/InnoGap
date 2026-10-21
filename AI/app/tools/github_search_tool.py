@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import logging
 import re
 from typing import Any, Dict, List, Optional
 import httpx
@@ -8,6 +9,8 @@ from app.config import settings
 from app.schemas.tools import GitHubCandidateRepo, GitHubSearchInput, GitHubSearchOutput
 from app.tools.base import AgentTool
 from app.utils.deduplicate import remove_duplicate_repositories
+
+logger = logging.getLogger("innogap.tools.github")
 
 GITHUB_API_URL = "https://api.github.com"
 MAX_RESULTS_PER_QUERY = 5
@@ -19,22 +22,43 @@ CODE_EXTENSION_REGEX = re.compile(
 )
 
 
-def _github_headers() -> Dict[str, str]:
+def _github_headers(use_token: bool = True) -> Dict[str, str]:
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
         "User-Agent": "InnoGap-AgenticAI/1.0",
     }
-    if settings.GITHUB_TOKEN:
+    if use_token and settings.GITHUB_TOKEN:
         headers["Authorization"] = f"Bearer {settings.GITHUB_TOKEN}"
     return headers
+
+
+async def _safe_github_get(
+    client: httpx.AsyncClient,
+    url: str,
+    params: Optional[Dict[str, Any]] = None,
+    timeout: float = 8.0,
+) -> Optional[httpx.Response]:
+    try:
+        resp = await client.get(url, params=params, timeout=timeout)
+        if resp.status_code == 401:
+            logger.warning(
+                "[GitHub Search Tool] Received 401 Bad Credentials from GitHub API. Removing invalid token and retrying unauthenticated..."
+            )
+            if "Authorization" in client.headers:
+                del client.headers["Authorization"]
+            resp = await client.get(url, params=params, timeout=timeout)
+        return resp
+    except Exception as e:
+        logger.warning(f"[GitHub Search Tool] Request to {url} failed: {e}")
+        return None
 
 
 async def _get_repository_readme(client: httpx.AsyncClient, full_name: str) -> str:
     try:
         url = f"{GITHUB_API_URL}/repos/{full_name}/readme"
-        resp = await client.get(url, timeout=8.0)
-        if resp.status_code != 200:
+        resp = await _safe_github_get(client, url, timeout=8.0)
+        if resp is None or resp.status_code != 200:
             return ""
         data = resp.json()
         if data.get("encoding") != "base64" or not data.get("content"):
@@ -42,6 +66,7 @@ async def _get_repository_readme(client: httpx.AsyncClient, full_name: str) -> s
         raw_b64 = data["content"].replace("\n", "")
         return base64.b64decode(raw_b64).decode("utf-8", errors="replace")
     except Exception as e:
+        logger.warning(f"[GitHub Search Tool] Error reading README for {full_name}: {e}")
         return ""
 
 
@@ -51,13 +76,14 @@ async def _get_repository_files(
     try:
         branch = default_branch or "main"
         url = f"{GITHUB_API_URL}/repos/{full_name}/git/trees/{branch}?recursive=1"
-        resp = await client.get(url, timeout=8.0)
-        if resp.status_code != 200:
+        resp = await _safe_github_get(client, url, timeout=8.0)
+        if resp is None or resp.status_code != 200:
             return []
         data = resp.json()
         tree = data.get("tree", [])
         return [entry["path"] for entry in tree if entry.get("type") == "blob" and "path" in entry]
-    except Exception:
+    except Exception as e:
+        logger.warning(f"[GitHub Search Tool] Error reading files for {full_name}: {e}")
         return []
 
 
@@ -69,12 +95,20 @@ async def _search_query(client: httpx.AsyncClient, query: str) -> List[Dict[str,
             "order": "desc",
             "per_page": str(MAX_RESULTS_PER_QUERY),
         }
-        resp = await client.get(f"{GITHUB_API_URL}/search/repositories", params=params, timeout=10.0)
+        resp = await _safe_github_get(
+            client, f"{GITHUB_API_URL}/search/repositories", params=params, timeout=10.0
+        )
+        if resp is None:
+            return []
         if resp.status_code != 200:
+            logger.warning(
+                f"[GitHub Search Tool] Query '{query}' returned status {resp.status_code}: {resp.text[:150]}"
+            )
             return []
         data = resp.json()
         return data.get("items", []) or []
-    except Exception:
+    except Exception as e:
+        logger.warning(f"[GitHub Search Tool] Search query '{query}' failed: {e}")
         return []
 
 
@@ -91,7 +125,12 @@ async def _inspect_candidate(
     )
 
     trimmed_readme = readme.strip() if isinstance(readme, str) else ""
-    if len(trimmed_readme) < 150:
+    if len(trimmed_readme) < 80:
+        desc = repo_item.get("description") or ""
+        if len(desc) >= 30:
+            trimmed_readme = f"{desc}\n\n{trimmed_readme}".strip()
+
+    if len(trimmed_readme) < 40:
         return None
 
     # Check if code files exist
@@ -141,7 +180,7 @@ async def _run_github_search(input_data: GitHubSearchInput) -> GitHubSearchOutpu
 
 github_search_tool = AgentTool(
     name="github_search_tool",
-    description="Searches GitHub repositories by queries, fetches decoded README and git tree, enforces code existence & minimum 150-char README, returning up to 4 viable repos.",
+    description="Searches GitHub repositories by queries, fetches decoded README and git tree, enforces code existence & viable README, returning up to 4 viable repos.",
     input_schema=GitHubSearchInput,
     output_schema=GitHubSearchOutput,
     func=_run_github_search,

@@ -50,18 +50,22 @@ export default function RecentAnalyses({
           </h2>
 
           <p className="mt-1 text-xs text-[var(--text)]">
-            Your latest innovation analysis results.
+            {analyses.length > 0
+              ? `${analyses.length} ${analyses.length === 1 ? 'analysis' : 'analyses'} recorded in your workspace`
+              : 'Your latest innovation analysis results.'}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onViewAll}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ink)] transition hover:text-[var(--muted)]"
-        >
-          View all
-          <ArrowRight className="h-3.5 w-3.5" />
-        </button>
+        {analyses.length > 0 && (
+          <button
+            type="button"
+            onClick={onViewAll}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ink)] transition hover:text-[var(--muted)]"
+          >
+            View all ({analyses.length})
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       <div className="divide-y divide-[var(--border)] p-3 sm:p-4">
@@ -75,7 +79,11 @@ export default function RecentAnalyses({
                 key={analysis.id}
                 type="button"
                 onClick={() => onSelect?.(analysis)}
-                className={`group flex w-full items-center gap-3 rounded-[18px] px-3 py-3.5 text-left transition sm:gap-4 sm:px-4 ${index === 0 ? 'bg-[var(--accent-tint)] hover:bg-[var(--accent-tint)]' : 'hover:bg-[var(--surface)]'}`}
+                className={`group flex w-full items-center gap-3 rounded-[18px] px-3 py-3.5 text-left transition sm:gap-4 sm:px-4 ${
+                  index === 0
+                    ? 'bg-[var(--accent-tint)] hover:bg-[var(--accent-tint)]'
+                    : 'hover:bg-[var(--surface)]'
+                }`}
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--icon-tile)] text-[var(--ink)]">
                   <Icon className="h-4.5 w-4.5" />
@@ -88,6 +96,7 @@ export default function RecentAnalyses({
 
                   <span className="mt-1 block truncate text-xs text-[var(--text)]">
                     {analysis.description ||
+                      analysis.resultData?.summary ||
                       'Innovation analysis result'}
                   </span>
                 </span>
@@ -99,7 +108,7 @@ export default function RecentAnalyses({
 
                 <span className="hidden items-center gap-1 text-[11px] text-[var(--muted)] lg:flex">
                   <Clock3 className="h-3.5 w-3.5" />
-                  {analysis.time || '—'}
+                  {analysis.date || analysis.time || 'Recent'}
                 </span>
 
                 <ArrowRight className="h-4 w-4 shrink-0 text-[var(--muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--ink)]" />
