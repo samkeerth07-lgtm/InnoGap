@@ -13,8 +13,6 @@ export default function PageHeader({ onStartAnalysis, onOpenCommandBar }) {
       {/* Background glow */}
       <div className="pointer-events-none absolute right-[5%] top-[-170px] h-[320px] w-[440px] rounded-full bg-[var(--surface)] blur-3xl" />
 
-      <div className="pointer-events-none absolute right-[20%] top-[20px] h-[220px] w-[260px] rounded-full bg-[var(--bg-edge)] blur-2xl" />
-
       <div className="relative flex min-h-[150px] items-center">
         {/* LEFT CONTENT */}
         <div className="relative z-10">
@@ -55,9 +53,6 @@ export default function PageHeader({ onStartAnalysis, onOpenCommandBar }) {
               >
                 <Search className="h-3.5 w-3.5 text-[var(--muted)]" />
                 <span>Search ideas</span>
-                <kbd className="hidden sm:inline-block rounded bg-[var(--icon-tile)] px-1.5 py-0.5 text-[9px] font-mono font-bold text-[var(--ink)]">
-                  ⌘K
-                </kbd>
               </button>
             )}
           </div>
