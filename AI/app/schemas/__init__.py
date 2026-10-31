@@ -1,4 +1,6 @@
 from app.schemas.analysis import AnalysisRequest, AnalysisResponse
+from app.schemas.health import HealthResponse
+from app.schemas.errors import ErrorResponse
 from app.schemas.solutions import ImplementationInfo, SimilarityInfo, UnifiedSolution
 from app.schemas.verification import EvidenceItem, VerificationResult
 from app.schemas.tools import (
@@ -28,6 +30,8 @@ from app.schemas.tools import (
 __all__ = [
     "AnalysisRequest",
     "AnalysisResponse",
+    "HealthResponse",
+    "ErrorResponse",
     "ImplementationInfo",
     "SimilarityInfo",
     "UnifiedSolution",

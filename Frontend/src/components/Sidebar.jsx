@@ -107,16 +107,14 @@ export default function Sidebar({
           className="flex items-center gap-2 rounded-full p-1.5 text-left transition hover:bg-[var(--bg)]"
         >
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--icon-tile)] text-xs font-bold text-[var(--ink)]">
-            A
+            U
           </span>
 
           <span className="min-w-0 flex-1">
             <span className="hidden truncate text-sm font-semibold text-[var(--ink)] sm:block">
-              Ananya R.
+              User
             </span>
-            <span className="hidden text-xs text-[var(--muted)] sm:block">
-              Student
-            </span>
+            
           </span>
 
           <ChevronDown className="hidden h-4 w-4 text-[var(--muted)] sm:block" />

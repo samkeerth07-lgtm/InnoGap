@@ -1,11 +1,8 @@
 [project]
-name = "innogap-backend"
+name = "innogap-analysis-service"
 version = "1.0.0"
-description = "InnoGap Agentic AI Backend in Python"
+description = "InnoGap Dedicated Python FastAPI Analysis Service"
 readme = "README.md"
-authors = [
-    { name = "Shivam Chaudhary", email = "shivamchy076@gmail.com" }
-]
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",
@@ -23,3 +20,7 @@ dependencies = [
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
